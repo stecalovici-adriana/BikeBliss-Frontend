@@ -12,6 +12,8 @@ function Register() {
   });
   const [formErrors, setFormErrors] = useState({});
   const [passwordStrength, setPasswordStrength] = useState([]);
+  const [showPasswordRequirements, setShowPasswordRequirements] =
+    useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,11 +38,14 @@ function Register() {
     }));
 
     setPasswordStrength(updatedRequirements);
+
+    const allValid = updatedRequirements.every((req) => req.valid);
+    setShowPasswordRequirements(!allValid);
   };
 
   const validateForm = () => {
     const errors = {};
-  
+
     if (!formData.fullName.trim()) {
       errors.fullName = "Full name is required";
     }
@@ -61,16 +66,19 @@ function Register() {
       errors.password = "Password is required";
     } else {
       if (!/[a-z]/.test(formData.password)) {
-        errors.password = "Password must contain at least one lowercase character";
+        errors.password =
+          "Password must contain at least one lowercase character";
       }
       if (!/[A-Z]/.test(formData.password)) {
-        errors.password = "Password must contain at least one uppercase character";
+        errors.password =
+          "Password must contain at least one uppercase character";
       }
       if (!/\d/.test(formData.password)) {
         errors.password = "Password must contain at least one number";
       }
       if (!/[@$!%*?&]/.test(formData.password)) {
-        errors.password = "Password must contain at least one special character";
+        errors.password =
+          "Password must contain at least one special character";
       }
       if (formData.password.length < 8) {
         errors.password = "Password must be at least 8 characters long";
@@ -79,9 +87,9 @@ function Register() {
     if (formData.confirmPassword !== formData.password) {
       errors.confirmPassword = "Passwords do not match";
     }
-  
+
     setFormErrors(errors);
-  
+
     return Object.keys(errors).length === 0;
   };
 
@@ -126,105 +134,125 @@ function Register() {
     <div className="signup-container">
       <form onSubmit={handleSubmit} className="signup-form">
         <h2 className="text-center mb-4">Sign Up</h2>
-        <div className="mb-3">
-          <input
-            type="text"
-            className="form-control"
-            id="fullName"
-            name="fullName"
-            placeholder="Full Name"
-            value={formData.fullName}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-person-fill input-icon"></i>
+            <input
+              type="text"
+              className="form-control"
+              id="fullName"
+              name="fullName"
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {formErrors.fullName && (
             <div className="error-text">{formErrors.fullName}</div>
           )}
         </div>
-        <div className="mb-3">
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-envelope-fill input-icon"></i>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {formErrors.email && (
             <div className="error-text">{formErrors.email}</div>
           )}
         </div>
-        <div className="mb-3">
-          <input
-            type="text"
-            className="form-control"
-            id="username"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-person-badge-fill input-icon"></i>
+            <input
+              type="text"
+              className="form-control"
+              id="username"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {formErrors.username && (
             <div className="error-text">{formErrors.username}</div>
           )}
         </div>
-        <div className="mb-3">
-          <input
-            type="number"
-            className="form-control"
-            id="age"
-            name="age"
-            placeholder="Age"
-            value={formData.age}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-calendar3 input-icon"></i>
+            <input
+              type="number"
+              className="form-control"
+              id="age"
+              name="age"
+              placeholder="Age"
+              value={formData.age}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {formErrors.age && <div className="error-text">{formErrors.age}</div>}
         </div>
-        <div className="mb-3">
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-lock-fill input-icon"></i>
+            <input
+              type="password"
+              className="form-control"
+              id="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {formErrors.password && (
             <div className="error-text">{formErrors.password}</div>
           )}
-          <div className="password-requirements">
-            {passwordStrength.map((req, index) => (
-              <div
-                key={index}
-                className={`requirement ${req.valid ? "valid" : "invalid"}`}
-              >
-                {req.valid ? (
-                  <span className="valid-mark">✔</span>
-                ) : (
-                  <span className="invalid-mark">✖</span>
-                )}
-                {req.message}
-              </div>
-            ))}
-          </div>
+          {showPasswordRequirements && (
+            <div className="password-requirements">
+              {passwordStrength.map((req, index) => (
+                <div
+                  key={index}
+                  className={`requirement ${req.valid ? "valid" : "invalid"}`}
+                >
+                  {req.valid ? (
+                    <span className="valid-mark">✔</span>
+                  ) : (
+                    <span className="invalid-mark">✖</span>
+                  )}
+                  {req.message}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="mb-3">
-          <input
-            type="password"
-            className="form-control"
-            id="confirmPassword"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-lock-fill input-icon"></i>
+            <input
+              type="password"
+              className="form-control"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {formErrors.confirmPassword && (
             <div className="error-text">{formErrors.confirmPassword}</div>
           )}
