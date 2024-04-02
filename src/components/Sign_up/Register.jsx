@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
 function Register() {
@@ -12,8 +13,8 @@ function Register() {
   });
   const [formErrors, setFormErrors] = useState({});
   const [passwordStrength, setPasswordStrength] = useState([]);
-  const [showPasswordRequirements, setShowPasswordRequirements] =
-    useState(true);
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(true);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,41 +94,35 @@ function Register() {
     return Object.keys(errors).length === 0;
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     try {
-      const response = await fetch("http://localhost:8080/api/users/register", {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-
+  
       if (response.ok) {
-        console.log("User registered:", data);
-        alert("Registration successful!");
-        // Redirect user or clear form here
-        // ...
+        alert("Registration successful! Please check your email to verify your account before logging in.");
+        //navigate('/verify-email'); 
       } else {
-        // Backend validation errors
-        if (data.errors) {
-          setFormErrors(data.errors);
-        } else {
-          // If there's a different kind of error that's not field-specific
-          setFormErrors({
-            form: data.message || "An unexpected error occurred.",
-          });
-        }
+        const errorData = await response.json();
+        console.log(errorData); 
+        setFormErrors({ ...formErrors, ...errorData.errors });
       }
     } catch (error) {
-      console.error("Network error:", error);
-      alert("An error occurred. Please try again later.");
+      setFormErrors({ ...formErrors, form: error.message || "Network error, please try again later." });
     }
+  };
+
+  const handleSignInClick = () => {
+    navigate('/login'); 
   };
 
   return (
@@ -257,13 +252,17 @@ function Register() {
             <div className="error-text">{formErrors.confirmPassword}</div>
           )}
         </div>
+        {formErrors.form && (
+  <div className="error-text">{formErrors.form}</div>
+)}
+
         <div className="d-grid gap-2">
           <button type="submit" className="btn btn-signup">
             Sign Up
           </button>
         </div>
         <div className="signin-link text-center">
-          Already have an account? <a href="/signin">Sign in</a>
+          Already have an account? <button onClick={handleSignInClick} className="btn-link">Sign in</button>
         </div>
       </form>
     </div>

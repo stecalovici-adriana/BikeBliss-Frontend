@@ -11,7 +11,7 @@
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #FFF; /* Adăugat culoarea de fundal */
+  background-color: #FFF; 
 }
 
 .input-group {
@@ -33,7 +33,6 @@
   border: none; 
 }
 
-/* Stiluri pentru a anula efectele de autofill */
 .form-control:-webkit-autofill,
 .form-control:-webkit-autofill:hover, 
 .form-control:-webkit-autofill:focus, 
@@ -47,11 +46,10 @@
   box-shadow: none;
 }
 
-/* Înlătură stilurile absolute și plasează eroarea sub input */
 .error-text {
   color: #d9534f;
   font-size: 0.875rem;
-  margin-top: 4px; /* Ajustează după necesități */
+  margin-top: 4px; 
   display: block;
 }
 
@@ -69,10 +67,25 @@
 .btn-signup:hover {
   background-color: #0056b3;
 }
+.btn-link {
+  background: none;
+  border: none;
+  color: blue; 
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-family: inherit; 
+  font-size: inherit; 
+}
 
+.btn-link:hover,
+.btn-link:focus {
+  text-decoration: none;
+  outline: none; 
+}
 .password-requirements {
   padding: 0;
-  margin-top: 4px; /* Ajustează după necesități */
+  margin-top: 4px; 
   list-style: none;
 }
 
