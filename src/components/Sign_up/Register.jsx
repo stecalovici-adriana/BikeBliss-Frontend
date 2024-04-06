@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Register.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Register.css';
 
 function Register() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     username: "",
-    age: "",
+    birthDate: "",
     password: "",
     confirmPassword: "",
   });
@@ -15,6 +15,40 @@ function Register() {
   const [passwordStrength, setPasswordStrength] = useState([]);
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(true);
   const navigate = useNavigate();
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  const resetForm = () => {
+    setFormData({
+      fullName: "",
+      email: "",
+      username: "",
+      birthDate: "",
+      password: "",
+      confirmPassword: "",
+    });
+    // Poți de asemenea să resetezi și alte stări dacă este necesar
+    setFormErrors({});
+    setPasswordStrength([]);
+    setShowPasswordRequirements(true);
+  };
+
+  useEffect(() => {
+    // Această funcție este apelată când valoarea JWT din localStorage se schimbă
+    const handleStorageChange = (e) => {
+      if (e.key === 'jwtToken' && e.newValue) {
+        resetForm();
+        navigate('/my-account');
+      }
+    };
+
+    // Adăugați event listener pentru schimbările de localStorage
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup function pentru a elimina event listener-ul
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +56,11 @@ function Register() {
     if (name === "password") {
       checkPasswordStrength(value);
     }
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
   };
 
   const checkPasswordStrength = (password) => {
@@ -58,10 +97,8 @@ function Register() {
     if (!formData.username.trim()) {
       errors.username = "Username is required";
     }
-    if (!formData.age) {
-      errors.age = "Age is required";
-    } else if (Number(formData.age) < 18) {
-      errors.age = "You must be at least 18 years old";
+    if (!formData.birthDate) { 
+      errors.birthDate = "Birth date is required"; 
     }
     if (!formData.password) {
       errors.password = "Password is required";
@@ -94,7 +131,6 @@ function Register() {
     return Object.keys(errors).length === 0;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -108,16 +144,18 @@ function Register() {
         body: JSON.stringify(formData),
       });
   
+      const data = await response.json();
+      console.log('Răspuns de la server:', data);
+      
       if (response.ok) {
-        alert("Registration successful! Please check your email to verify your account before logging in.");
-        //navigate('/verify-email'); 
+        alert(data.message || 'Registration successful! Please check your email to verify your account.');
+        navigate('/my-account');
       } else {
-        const errorData = await response.json();
-        console.log(errorData); 
-        setFormErrors({ ...formErrors, ...errorData.errors });
+        setFormErrors({ ...formErrors, ...data.errors });
       }
     } catch (error) {
-      setFormErrors({ ...formErrors, form: error.message || "Network error, please try again later." });
+      console.error("Error during registration: ", error);
+      setFormErrors({ ...formErrors, form: "Network error, please try again later." });
     }
   };
 
@@ -143,27 +181,27 @@ function Register() {
               required
             />
           </div>
-          {formErrors.fullName && (
-            <div className="error-text">{formErrors.fullName}</div>
-          )}
+          <div>
+            {formErrors.fullName && ( <div className="error-text">{formErrors.fullName}</div>)}
+          </div>
         </div>
         <div className="mb-3 position-relative">
           <div className="input-group">
-            <i className="bi bi-envelope-fill input-icon"></i>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+              <i className="bi bi-envelope-fill input-icon"></i>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
           </div>
-          {formErrors.email && (
-            <div className="error-text">{formErrors.email}</div>
-          )}
+          <div>
+            {formErrors.email && <div className="error-text">{formErrors.email}</div>}
+          </div>
         </div>
         <div className="mb-3 position-relative">
           <div className="input-group">
@@ -179,25 +217,30 @@ function Register() {
               required
             />
           </div>
+          <div>
           {formErrors.username && (
             <div className="error-text">{formErrors.username}</div>
           )}
+          </div>
         </div>
         <div className="mb-3 position-relative">
           <div className="input-group">
             <i className="bi bi-calendar3 input-icon"></i>
             <input
-              type="number"
+              type="date" 
               className="form-control"
-              id="age"
-              name="age"
-              placeholder="Age"
-              value={formData.age}
+              id="birthDate" 
+              name="birthDate" 
+              placeholder="Birth Date"
+              value={formData.birthDate} 
               onChange={handleChange}
+              max={currentDate}
               required
             />
           </div>
-          {formErrors.age && <div className="error-text">{formErrors.age}</div>}
+          <div>
+          {formErrors.birthDate && <div className="error-text">{formErrors.birthDate}</div>}
+          </div>
         </div>
         <div className="mb-3 position-relative">
           <div className="input-group">
@@ -213,9 +256,11 @@ function Register() {
               required
             />
           </div>
+          <div>
           {formErrors.password && (
             <div className="error-text">{formErrors.password}</div>
           )}
+          </div>
           {showPasswordRequirements && (
             <div className="password-requirements">
               {passwordStrength.map((req, index) => (
@@ -248,13 +293,13 @@ function Register() {
               required
             />
           </div>
-          {formErrors.confirmPassword && (
-            <div className="error-text">{formErrors.confirmPassword}</div>
-          )}
+          <div>
+            {formErrors.confirmPassword && (<div className="error-text">{formErrors.confirmPassword}</div>)}
+          </div>
         </div>
         {formErrors.form && (
-  <div className="error-text">{formErrors.form}</div>
-)}
+          <div className="error-text">{formErrors.form}</div>
+        )}
 
         <div className="d-grid gap-2">
           <button type="submit" className="btn btn-signup">

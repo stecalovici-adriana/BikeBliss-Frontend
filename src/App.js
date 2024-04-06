@@ -4,6 +4,8 @@ import Register from './components/Sign_up/Register';
 import VerifyEmailPage from './components/Sign_up/VerifyEmailPage';
 import Home from './components/Home';
 import Login from './components/Sign_in/Login';
+import MyAccount from './components/MyAccount';
+
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/my-account" element={<MyAccount />} />
       </Routes>
     </Router>
   );
