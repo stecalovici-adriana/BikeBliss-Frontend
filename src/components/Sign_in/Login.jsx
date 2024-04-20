@@ -53,37 +53,43 @@ function Login() {
       setLoginErrors({ form: error.message || "Network error, please try again later." });
     }
   };
-
+  
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
-        <h2 className="text-center mb-4">Log In</h2>
-        <div className="mb-3">
-          <input
-            type="text"
-            className="form-control"
-            id="username"
-            name="username"
-            placeholder="Username"
-            value={credentials.username}
-            onChange={handleChange}
-            required
-          />
+        <h2 className="text-center mb-4">Sign in</h2>
+                <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-person-badge-fill input-icon"></i>
+            <input
+              type="text"
+              className="form-control"
+              id="username"
+              name="username"
+              placeholder="Username"
+              value={credentials.username}
+              onChange={handleChange}
+              required
+            />
+          </div>
           {loginErrors.username && (
             <div className="error-text">{loginErrors.username}</div>
           )}
         </div>
-        <div className="mb-3">
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            name="password"
-            placeholder="Password"
-            value={credentials.password}
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-3 position-relative">
+          <div className="input-group">
+            <i className="bi bi-lock-fill input-icon"></i>
+            <input
+              type="password"
+              className="form-control"
+              id="password"
+              name="password"
+              placeholder="Password"
+              value={credentials.password}
+              onChange={handleChange}
+              required
+            />
+            </div>
           {loginErrors.password && (
             <div className="error-text">{loginErrors.password}</div>
           )}
@@ -91,14 +97,19 @@ function Login() {
         {loginErrors.form && (
           <div className="error-text">{loginErrors.form}</div>
         )}
+        <div className="forgot-password-link text-center">
+          <Link to="/forgot-password" className="link-forgot-password">Forgot password?</Link>
+        </div>
         <div className="d-grid gap-2">
           <button type="submit" className="btn btn-primary">
-            Log In
+            Sign in
           </button>
         </div>
+        <div className="login-footer">
         <div className="signup-link text-center">
-           Don't have an account? <Link to="/signup" className="link-signup">Sign up</Link>
+          Don't have an account? <Link to="/signup" className="link-signup">Sign up</Link>
         </div>
+      </div>
       </form>
     </div>
   );

@@ -14,6 +14,7 @@ function Register() {
   const [formErrors, setFormErrors] = useState({});
   const [passwordStrength, setPasswordStrength] = useState([]);
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(true);
+  const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -33,7 +34,6 @@ function Register() {
   };
 
   useEffect(() => {
-    // Această funcție este apelată când valoarea JWT din localStorage se schimbă
     const handleStorageChange = (e) => {
       if (e.key === 'jwtToken' && e.newValue) {
         resetForm();
@@ -41,10 +41,8 @@ function Register() {
       }
     };
 
-    // Adăugați event listener pentru schimbările de localStorage
     window.addEventListener('storage', handleStorageChange);
 
-    // Cleanup function pentru a elimina event listener-ul
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -148,8 +146,7 @@ function Register() {
       console.log('Răspuns de la server:', data);
       
       if (response.ok) {
-        alert(data.message || 'Registration successful! Please check your email to verify your account.');
-        navigate('/my-account');
+        setEmailSent(true);
       } else {
         setFormErrors({ ...formErrors, ...data.errors });
       }
@@ -166,7 +163,7 @@ function Register() {
   return (
     <div className="signup-container">
       <form onSubmit={handleSubmit} className="signup-form">
-        <h2 className="text-center mb-4">Sign Up</h2>
+        <h2 className="text-center mb-4">Sign up</h2>
         <div className="mb-3 position-relative">
           <div className="input-group">
             <i className="bi bi-person-fill input-icon"></i>
@@ -303,9 +300,14 @@ function Register() {
 
         <div className="d-grid gap-2">
           <button type="submit" className="btn btn-signup">
-            Sign Up
+            Sign up
           </button>
         </div>
+        {emailSent && (
+          <div className="verification-message">
+            Registration successful! Please check your email to verify your account.
+          </div>
+        )}
         <div className="signin-link text-center">
           Already have an account? <button onClick={handleSignInClick} className="btn-link">Sign in</button>
         </div>

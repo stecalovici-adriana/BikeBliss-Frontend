@@ -1,0 +1,26 @@
+.navbar {
+  width: 100%;
+  background-color: #fff; 
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.sign-in-button {
+  margin-left: auto;
+}
+
+.sign-in-icon .bi-person {
+  color: #6c757d; /* Schimbă culoarea în gri */
+  font-size: 2rem; /* Mărește dimensiunea iconiței */
+}
+
+.sign-in-icon:hover .bi-person {
+  color: #495057; /* Culoare la hover */
+}

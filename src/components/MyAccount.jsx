@@ -23,12 +23,20 @@ function MyAccount() {
       }
       return response.json();
     })
-    .then(data => setUserDetails(data))
+    .then(data => {
+      // Combinați 'firstName' și 'lastName' într-un singur nume complet, dacă acestea sunt separate
+      const fullName = data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : '';
+      setUserDetails({
+        ...data,
+        fullName, // adaugă fullName combinat în obiectul userDetails
+      });
+    })
     .catch((error) => {
       console.error('Fetching user details failed:', error);
       navigate('/login');
     });
   }, [navigate]);
+
 
   if (!userDetails) {
     return <div>Loading...</div>;
