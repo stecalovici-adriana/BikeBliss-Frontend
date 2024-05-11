@@ -1,0 +1,84 @@
+.title-and-filters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-title, .filter-button {
+  font-size: 1rem; 
+  color: #333; 
+  cursor: pointer; 
+  padding: 0; 
+  margin: 0; 
+  display: inline-block; 
+  text-decoration: none; 
+}
+
+.page-title {
+  margin-right: 20px; 
+}
+
+.page-title:hover, .filter-button:hover {
+  background-color: transparent;
+  border: none;
+}
+
+.page-link {
+  text-decoration: none; 
+  color: inherit; 
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  width: 200px;
+}
+
+.filter-dropdown:hover .dropdown-content {
+  display: block; 
+}
+
+.dropdown-content ul {
+  list-style: none; 
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-content ul li {
+  padding: 10px; 
+  cursor: pointer; 
+}
+
+.dropdown-content ul li:hover {
+  background-color: #e0e0e0; 
+}
+
+.sort-select {
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.bikes-container {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center; 
+}
+
+.bikes-container .bike-card {
+  margin: 10px; 
+}
+
+.bikes-container .bike-card img {
+  width: 100%; 
+  height: auto; 
+  max-height: 200px; 
+  object-fit: contain;
+}

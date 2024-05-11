@@ -1,26 +1,105 @@
+/* NavBar.css */
 .navbar {
   width: 100%;
-  background-color: #fff; 
+  background-color: white;
+  padding: 10px 20px;
 }
 
-.nav-container {
-  max-width: 1200px;
-  margin: auto;
+.container-fluid {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
 }
 
-.sign-in-button {
-  margin-left: auto;
+.sign-in-icon {
+  font-size: 1.2rem;
+  color: #495057;
+  text-decoration: none;
 }
 
-.sign-in-icon .bi-person {
-  color: #6c757d; /* Schimbă culoarea în gri */
-  font-size: 2rem; /* Mărește dimensiunea iconiței */
+.sign-in-icon:hover {
+  color: #333;
 }
 
-.sign-in-icon:hover .bi-person {
-  color: #495057; /* Culoare la hover */
+.account-icon-container {
+  position: relative;
+}
+
+.account-icon-container .dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  border: none; 
+  border-radius: 0;
+}
+
+.account-icon-container:hover .dropdown-menu {
+  display: block;
+}
+
+.account-icon-container .account-icon {
+  color: gray;
+  font-size: 1.5rem;
+}
+
+.account-icon-container .account-icon:hover {
+  color: #0056b3;
+}
+
+.dropdown-menu a, .dropdown-menu button {
+  display: block;
+  padding: 8px 10px; 
+  color: #333;
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f5f5f5;
+}
+
+.account-icon-container .dropdown-menu button {
+  display: block;
+  padding: 10px;
+  background-color: white;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  text-align: left;
+}
+
+.account-icon-container .dropdown-menu button:hover {
+  color: #0056b3;
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #495057;
+  text-decoration: none;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0056b3; /* Example blue background */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none; /* Ensure no underline */
+}
+
+button .user-avatar, button .user-avatar:hover, button .user-avatar:focus {
+  text-decoration: none; /* Ensuring no underline on any button state */
+}
+
+.account-icon, .account-icon:hover, .account-icon:focus {
+  text-decoration: none; /* Applies to surrounding elements if necessary */
 }

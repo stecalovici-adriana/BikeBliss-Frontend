@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; 
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 function Login() {
   const [credentials, setCredentials] = useState({
     username: "",
     password: ""
   });
+  const { login } = useAuth(); 
   const [loginErrors, setLoginErrors] = useState({});
   const navigate = useNavigate();
 
@@ -45,7 +47,8 @@ function Login() {
 
       if (response.ok) {
         localStorage.setItem('jwtToken', data.token); 
-        navigate('/home'); 
+        login(data.token);
+        navigate('/bikes-page'); 
       } else {
         setLoginErrors({ form: data.message || "Login failed, please try again." });
       }

@@ -1,0 +1,222 @@
+.my-account-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+/* Styling for the user details section */
+.user-details-section {
+  flex: 1;
+  margin: 0 10px;
+  position: relative; /* Needed for absolute positioning of the avatar */
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align content */
+}
+
+.userAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #0056b3;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: -25px; /* Adjusted to position avatar above the header section */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between; /* Ensure spacing between title and icon */
+  width: 100%; /* Use full width available */
+  margin-top: 30px; /* Space below the avatar */
+}
+
+.header-section h2 {
+  margin: 0;
+  flex-grow: 1;
+  font-size: 1.4rem;
+  color: #0056b3;
+}
+
+/* Button styling within the user details section */
+.user-details-section button {
+  background-color: #0056b3; /* Button color matches avatar background */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%; /* Full width to match user data box */
+  margin-top: 20px; /* Space after header section */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Slight shadow for depth */
+}
+
+.rentals-section {
+  flex: 3; /* Adjust size to fit content */
+  padding: 20px;
+  margin-left: 20px; /* Separation from the user details */
+  background-color: #f8f9fa; /* Light grey background for distinction */
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .my-account-container {
+    flex-direction: column; /* Stack sections vertically on smaller screens */
+    align-items: center; /* Center align sections */
+  }
+
+  .user-details-section, .rentals-section {
+    max-width: 100%; /* Take full width on smaller screens */
+    margin: 10px 0; /* Add some margin for spacing */
+  }
+}
+
+/* Styling for the rentals list */
+.rentals-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rental-item {
+  display: flex;
+  align-items: center; /* Align items in the center vertically */
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex-direction: row; /* Align items horizontally */
+}
+
+.rental-item:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rental-preview {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.rental-bike-image {
+  width: 150px;
+  margin-right: 20px;
+}
+
+.rental-brief {
+  display: flex;
+  justify-content: space-between; /* Distribuie elementele pe axa orizontală */
+  align-items: center; /* Centrează elementele pe axa verticală */
+  width: calc(100% - 180px); /* Ajustează lățimea, scăzând lățimea imaginii */
+  margin-left: 180px; /* Oferă spațiu pentru imagine */
+}
+
+.rental-brief p {
+  margin: 0;
+  text-align: left; /* Aliniază textul la stânga */
+  flex-grow: 1; /* Permite textului să ocupe spațiu disponibil */
+}
+
+.expand-icon {
+  margin-left: auto; /* Așază iconița la capătul drept al containerului său */
+}
+.rental-details {
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+/* Styling for text in the rental details */
+.rental-details p {
+  margin: 5px 0; /* Spacing for paragraphs */
+  line-height: 1.6; /* Improving line spacing for readability */
+  color: #333; /* Darker text for better readability */
+}
+
+/* Enhancing the visual hierarchy of titles in rental details */
+.rental-details strong {
+  font-weight: 600; /* Strong emphasis for labels */
+  color: #0056b3; /* Theme color for titles */
+}
+/* Button styling within the user details section */
+.account-settings-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Spread content evenly */
+  width: 100%; /* Full width to match the user data box */
+  background-color: #ffffff; /* White background */
+  color: #333333; /* Dark text for visibility */
+  border: 1px solid #cccccc; /* Light gray border */
+  padding: 8px 20px; /* Padding for better touch */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+  font-size: 16px; /* Slightly larger font */
+  cursor: pointer;
+}
+
+.bi-gear-fill, .bi-caret-right-fill {
+  margin: 0 5px; 
+}
+
+/* Ensuring the icons are vertically centered with text */
+.account-settings-button i {
+  vertical-align: middle;
+}
+/* Modal custom styling for a more modern look */
+.modal-header {
+  background-color: #f8f9fa; /* Light grey background for the header */
+  border-bottom: 1px solid #dee2e6; /* A subtle border to separate header from body */
+  font-size: 18px; /* Larger font size for the title */
+}
+
+.modal-title {
+  color: #0056b3; /* Theme color for the title */
+  font-weight: bold; /* Bold font for emphasis */
+}
+
+.modal-body {
+  padding: 20px; /* More padding for better spacing */
+}
+
+.modal-footer {
+  border-top: 1px solid #dee2e6; /* A subtle border to separate footer from body */
+  padding: 12px 20px; /* Padding adjustment for better spacing */
+}
+
+.form-control {
+  border-radius: 0.25rem; /* Rounded borders for input fields */
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075); /* Subtle inner shadow for depth */
+  border: 1px solid #ced4da; /* Standard border color */
+}
+
+.form-label {
+  font-weight: 600; /* Slightly bolder labels for better visibility */
+  color: #495057; /* Dark grey for readability */
+}
+
+/* Button styling within the modal footer */
+.btn-primary {
+  background-color: #0056b3; /* Primary theme color for save button */
+  border-color: #004085; /* Darker border color for contrast */
+}
+
+.btn-secondary {
+  background-color: #6c757d; /* Grey color for close button */
+  border-color: #545b62; /* Slightly darker border for contrast */
+}
