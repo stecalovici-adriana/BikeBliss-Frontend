@@ -6,17 +6,8 @@
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column; 
-  align-items: center; 
-}
-
-.bike-details-container h2 {
-  text-align: center;
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 25px;
-  color: #333;
-  width: 100%;
+  flex-direction: column;
+  align-items: center;
 }
 
 .bike-info-container {
@@ -28,105 +19,97 @@
 }
 
 .bike-image-container {
-  flex-basis: 50%; 
+  flex-basis: 50%;
   text-align: center;
   padding: 20px;
   border-right: 2px solid #e0e0e0;
 }
 
 .bike-image {
-  width: auto; 
-  max-width: 100%; 
-  height: auto; 
-  max-height: 300px; 
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
   border-radius: 8px;
 }
 
 .bike-details {
-  flex-basis: 50%; 
-  padding-left: 20px; 
+  flex-basis: 50%;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-.bike-title {
-  font-size: 22px;
-  font-weight: bold;
-  color: #3366cc;
-}
-
-.bike-description,
-.location-address,
-.price-per-day {
+.bike-title, .bike-description, .location-address, .price-per-day {
   font-size: 16px;
-  color: #666;
   margin-bottom: 10px;
 }
 
-.price-per-day {
-  white-space: nowrap; 
-  display: inline-block;
-}
-
-.rental-form {
-  margin-top: 20px;
+.ratings-and-feedback {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  align-items: start;
+  gap: 20px;  /* Adjust gap as needed */
 }
 
-.rental-form label {
-  font-weight: bold;
-  color: #444;
+.average-rating {
+  flex-grow: 1;
 }
-
-.rental-form input[type="date"] {
-  padding: 12px;
-  border: 2px solid #ccc;
+.feedback-entry .star-rating {
+  font-size: 18px;  /* Larger stars */
+}
+.feedback-section {
+  background-color: #f0f0f0; 
+  padding: 15px;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 400px;  /* Set a fixed width or adjust as needed */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border-radius: 5px;
 }
 
-
-.error-message {
-  color: #ff6666;
+.feedback-entry {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.success-message {
-  color: #33cc33;
+.feedback-entry:last-child {
+  border-bottom: none;
 }
 
+.feedback-entry p {
+  margin: 5px 0;
+  color: #333;
+}
+.feedback-entry strong {
+  color: black;
+  font-size: 16px;  /* Slightly larger font size for usernames */
+}
 .input-group {
   display: flex;
   align-items: center;
-  border: 1px solid #ced4da; /* softer border color */
+  border: 1px solid #ced4da;
   border-radius: 0.375rem;
-  overflow: hidden; /* Ensures the border radius affects child elements */
+  overflow: hidden;
 }
 
 .input-group .form-control {
   flex-grow: 1;
   border: none;
   padding: 0.75rem;
-  font-size: 1rem; /* Adjust font size as needed */
-  color: #495057; /* Darker text for better readability */
 }
 
 .calendar-icon {
-  color: #6c757d; /* Icon color */
-  background-color: white; /* Icon background */
-  cursor: pointer;
   padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #fff;
   border: none;
 }
 
-
 .rental-form .btn {
-  background-color: #007bff; /* Brighter blue for a more vibrant look */
-  border: none; /* Removing the border */
+  background-color: #007bff;
+  border: none;
 }
 
 .rental-form .btn:hover {
-  background-color: #0056b3; /* Darker shade on hover */
+  background-color: #0056b3;
 }
-

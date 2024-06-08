@@ -82,3 +82,43 @@
   max-height: 200px; 
   object-fit: contain;
 }
+.models-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; 
+  align-items: flex-start; 
+  gap: 20px; 
+}
+
+.add-model-button-container {
+  text-align: center; 
+  margin: 20px 0; 
+}
+.add-model-button {
+  color: #007bff; 
+  background-color: transparent; 
+  border: none;
+  padding: 8px 16px; 
+  font-size: 1rem; 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center;
+}
+
+.add-model-button:hover, .add-model-button:focus, .add-model-button:active {
+  color: #007bff; 
+  background-color: transparent;
+  box-shadow: none; 
+  outline: none;
+}
+
+.bi-plus-circle {
+  margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .bike-card, .equipment-card {
+    width: 90%; /* Adjusts the width to be more responsive on smaller screens */
+    margin: 1rem auto; /* Centers the card and adds vertical space */
+  }
+}

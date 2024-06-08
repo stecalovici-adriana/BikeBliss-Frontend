@@ -1,0 +1,24 @@
+.star-rating {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    color: gold;
+}
+
+.star-rating button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.star-rating .star {
+    pointer-events: none;
+}
+
+.star-rating .on .star {
+    color: orange; /* Color for active stars */
+}
+
+.star-rating .off .star {
+    color: grey; /* Color for inactive stars */
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
 import "./MyAccount.css";
+import FeedbackModal from './Feedback/FeedbackModal';
 
 function MyAccount() {
   const navigate = useNavigate();
@@ -24,6 +25,10 @@ function MyAccount() {
   const [showPendingRentals, setShowPendingRentals] = useState(false);
   const [showCompletedRentals, setShowCompletedRentals] = useState(false);
   const [completedRentals, setCompletedRentals] = useState([]);
+  const [feedbackModalShow, setFeedbackModalShow] = useState(false);
+  const [selectedRentalForFeedback,setSelectedRentalForFeedback] = useState(null);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [existingFeedback, setExistingFeedback] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
@@ -140,7 +145,6 @@ function MyAccount() {
   useEffect(() => {
     const fetchAllRentals = async () => {
       try {
-        // Preia toate închirierile active, în așteptare și completate
         const responses = await Promise.all([
           fetch("http://localhost:8080/api/rentals/active-rentals", {
             headers: {
@@ -163,7 +167,6 @@ function MyAccount() {
           responses.map((response) => response.json())
         );
 
-        // Combina datele din toate apelurile
         setRentals(data.flat());
       } catch (error) {
         console.error("Error fetching all rentals:", error);
@@ -201,7 +204,7 @@ function MyAccount() {
       return;
     }
 
-    console.log(`Updating user details for ID: ${userDetails.userId}`); // Debugging line to check userId value
+    console.log(`Updating user details for ID: ${userDetails.userId}`); 
 
     try {
       const response = await fetch(
@@ -240,8 +243,14 @@ function MyAccount() {
   };
   const handleRentalClick = (rental) => {
     setSelectedRental(rental);
+    if (rental) {
+      setSelectedRentalForFeedback(rental);
+    } else {
+      console.error('No rental data available');
+    }
     setShowRentalDetails(true);
   };
+  
 
   const handleCloseRentalDetails = () => {
     setShowRentalDetails(false);
@@ -249,39 +258,115 @@ function MyAccount() {
   };
   const handleCancelRental = async () => {
     if (!selectedRental || !selectedRental.rentalId) {
-      alert('No rental selected or rental ID is missing.');
-      return;
+        alert('No rental selected or rental ID is missing.');
+        return;
     }
-  
+
     const token = localStorage.getItem("jwtToken");
-    console.log(`Attempting to cancel rental with ID: ${selectedRental}`); // Debugging log
-  
+    console.log(`Attempting to cancel rental with ID: ${selectedRental.rentalId}`); 
+
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/rentals/cancelRental/${selectedRental.rentalId}`, {
-          method: "DELETE",
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
+        const response = await fetch(`http://localhost:8080/api/rentals/cancelRental/${selectedRental.rentalId}`, {
+            method: "DELETE",
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(`Failed to cancel rental: ${errorData.message}`, errorData);
+            alert(`Failed to cancel rental: ${errorData.message}`);
+            return;
+        }
+
+        alert('Rental canceled successfully.');
+        setRentals(prevRentals => prevRentals.filter(rental => rental.rentalId !== selectedRental.rentalId));
+        setSelectedRental(null);
+    } catch (error) {
+        console.error("An error occurred while canceling the rental:", error);
+        alert("An error occurred while canceling the rental.");
+    }
+};
+
+const handleFeedbackClick = async (event, rental) => {
+  event.stopPropagation();
+  try {
+    const response = await fetch(`http://localhost:8080/api/feedback/${rental.rentalId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const text = await response.text(); // Read response body as text first to check if it's empty
+    if (!text) {
+      console.log('No feedback data available.');
+      setFeedbackSubmitted(false);
+      setExistingFeedback(null);
+    } else {
+      const feedbackData = JSON.parse(text); // Safely parse JSON only if there is data
+      if (feedbackData.length > 0) {
+        setFeedbackSubmitted(true);
+        setExistingFeedback({
+          text: feedbackData[0].feedbackText,
+          rating: feedbackData[0].rating
+        });
+      } else {
+        setFeedbackSubmitted(false);
+        setExistingFeedback(null);
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    alert('Failed to load feedback. Please try again.');
+  }
+  setFeedbackModalShow(true);
+};
+
+
+const updateRentalsAfterFeedback = (rentalId) => {
+    setCompletedRentals(completedRentals.map(rental => {
+      if (rental.rentalId === rentalId) {
+        return { ...rental, feedbackSubmitted: true }; // Add this property to track feedback submission
+      }
+      return rental;
+    }));
+  };
+  const handleFeedbackSubmit = async (rentalId, feedback) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/feedback/submit/${rentalId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+        },
+        body: JSON.stringify({
+          feedbackText: feedback.text,
+          rating: feedback.rating
+        })
+      });
   
       if (response.ok) {
-        alert('Rental canceled successfully.');
-        // Optionally update the UI to reflect the change
-        setRentals(prevRentals => prevRentals.filter(rental => rental.rentalId !== selectedRental.rentalId));
-        setSelectedRental(null);  // Clear the selected rental
+        alert('Feedback submitted successfully');
+        setFeedbackSubmitted(true); // Indicate that feedback has now been submitted
+        setExistingFeedback(feedback); // Update the existing feedback
+        setFeedbackModalShow(false); // Close the modal
+        updateRentalsAfterFeedback(rentalId); // Optionally update the rental list
       } else {
         const errorData = await response.json();
-        alert(`Failed to cancel: ${errorData.message}`);
+        alert(`Failed to submit feedback: ${errorData.message || 'An error occurred'}`);
       }
     } catch (error) {
-      console.error("An error occurred:", error);
-      alert("An error occurred while canceling the rental.");
+      console.error('Failed to submit feedback:', error);
+      alert('Failed to submit feedback due to a network error.');
     }
   };
   
-
   if (!userDetails) {
     return <div>Loading...</div>;
   }
@@ -347,8 +432,7 @@ function MyAccount() {
           }}
           variant="outline-secondary"
           className="account-settings-button"
-          style={{ margin: "10px 0" }}
-        >
+          style={{ margin: "10px 0" }}>
           <i className="bi bi-clock-history"></i> Pending Rentals
           <i className="bi bi-caret-right-fill"></i>
         </Button>
@@ -428,34 +512,23 @@ function MyAccount() {
       )}
 
       {showCompletedRentals && completedRentals.length > 0 && (
-        <div className="rentals-section">
-          <h2>Completed Rentals</h2>
-          <ul className="rentals-list">
-            {completedRentals.map((rental, index) => (
-              <li
-                key={index}
-                className="rental-item"
-                onClick={() => handleRentalClick(rental)}
-              >
-                <div className="rental-preview">
-                  <img
-                    src={rental.bikeImageURL}
-                    alt="Bike"
-                    className="rental-bike-image"
-                  />
-                  <div className="rental-brief">
-                    <p>
-                      Bike rented from {formatDate(rental.startDate)} to{" "}
-                      {formatDate(rental.endDate)}
-                    </p>
-                    <i className="bi bi-caret-right-fill expand-icon"></i>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+  <div className="rentals-section">
+    <h2>Completed Rentals</h2>
+    <ul className="rentals-list">
+      {completedRentals.map((rental, index) => (
+        <li key={rental.rentalId} className="rental-item" onClick={() => handleRentalClick(rental)}>
+          <div className="rental-preview">
+            <img src={rental.bikeImageURL} alt="Bike" className="rental-bike-image" />
+            <div className="rental-brief">
+              <p>Bike rented from {formatDate(rental.startDate)} to {formatDate(rental.endDate)}</p>
+              <i className="bi bi-caret-right-fill expand-icon"></i>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
 
       {showRentals && (
         <div className="rentals-section">
@@ -585,18 +658,36 @@ function MyAccount() {
               <p>
                 <strong>Status:</strong> {selectedRental.rentalStatus}
               </p>
-              {selectedRental.rentalStatus === "PENDING" && (
-                <Button
-                  variant="danger"
-                  onClick={() => handleCancelRental(selectedRental.id)}
-                >
-                  Cancel Rental
-                </Button>
-              )}
-            </div>
+              {selectedRental && selectedRental.rentalStatus === "COMPLETED" && (
+  <Button variant="primary" onClick={(e) => handleFeedbackClick(e, selectedRental)}>Review</Button>
+)}
+
+    {selectedRental.rentalStatus === "PENDING" && (
+      <div className="cancel-container">
+      <p>Do you want to cancel this rental?</p>
+      <button
+        className="cancel-button"
+        onClick={() => handleCancelRental(selectedRental.id)}
+      >
+        Yes
+      </button>
+      </div>
+    )}
+ 
+</div>
           )}
         </Modal.Body>
       </Modal>
+      <FeedbackModal
+  show={feedbackModalShow}
+  onHide={() => setFeedbackModalShow(false)}
+  onSubmit={handleFeedbackSubmit}
+  rental={selectedRentalForFeedback}
+  feedbackSubmitted={feedbackSubmitted}
+  existingFeedback={existingFeedback}
+/>
+
+
     </div>
   );
 }

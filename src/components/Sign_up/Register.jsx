@@ -37,7 +37,7 @@ function Register() {
     const handleStorageChange = (e) => {
       if (e.key === 'jwtToken' && e.newValue) {
         resetForm();
-        navigate('/my-account');
+        navigate('/');
       }
     };
 

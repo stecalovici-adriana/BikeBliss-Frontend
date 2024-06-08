@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import Register from './components/Sign_up/Register';
 import VerifyEmailPage from './components/Sign_up/VerifyEmailPage';
 import Login from './components/Sign_in/Login';
@@ -9,6 +10,8 @@ import ForgotPassword from './components/Sign_in/ForgotPassword/ForgotPassword';
 import ResetPassword from './components/Sign_in/ResetPassword/ResetPassword';
 import BikesPage from './components/Bikes/BikesPage';
 import BikeDetails from './components/Bikes/BikeDetails';
+import EquipmentDetails from './components/Equipments/EquipmentDetails';
+import OwnerDashboard from './components/Owner/OwnerDashboard';
 
 function App() {
   return (
@@ -24,6 +27,8 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/bikes-page" element={<BikesPage />} />
         <Route path="/bikes/models/:modelId" element={<BikeDetails />} />
+        <Route path="/equipments/equipmentModels/:equipmentModelId" element={<EquipmentDetails />} />
+        <Route path="/admin/dashboard" element={<OwnerDashboard />} />
       </Routes>
     </Router>
   );

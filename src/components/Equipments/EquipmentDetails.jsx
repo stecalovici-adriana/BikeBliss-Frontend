@@ -2,45 +2,45 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./BikeDetails.css";
+import "./EquipmentDetails.css"; 
 import { addDays, addHours, startOfDay, endOfDay, setHours, setMinutes, setSeconds } from "date-fns";
-import StarRating from '../Feedback/StarRating'; 
 
-const BikeDetails = () => {
-  const { modelId } = useParams();
+const EquipmentDetails = () => {
+  const { equipmentModelId } = useParams();
   const navigate = useNavigate();
-  const [bikeModel, setBikeModel] = useState(null);
+  const [equipmentModel, setEquipmentModel] = useState(null);
   const [rentalDates, setRentalDates] = useState({
     startDate: "",
     endDate: "",
   });
   const [unavailableDates, setUnavailableDates] = useState([]);
-  const [averageRating, setAverageRating] = useState(0); 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [showFeedbacks, setShowFeedbacks] = useState(false);
 
   useEffect(() => {
-    const fetchBikeModel = async () => {
+    const fetchEquipment = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/bikes/models/${modelId}`);
+        const response = await fetch(
+          `http://localhost:8080/api/equipments/equipmentModels/${equipmentModelId}`
+        );
         if (response.ok) {
           const data = await response.json();
-          setBikeModel(data);
+          setEquipmentModel(data);
         } else {
           console.error(`HTTP Error: ${response.status}`);
-          setErrorMessage("Unable to load bike details.");
+          setErrorMessage("Unable to load equipment details.");
         }
       } catch (error) {
         console.error("Network error:", error);
         setErrorMessage("Network error, please try again later.");
       }
     };
-  
+
     const fetchUnavailableDates = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/rentals/unavailable-dates/${modelId}`);
+        const response = await fetch(
+          `http://localhost:8080/api/equipmentRentals/unavailable-dates/${equipmentModelId}`
+        );
         if (response.ok) {
           const data = await response.json();
           const formattedDates = data.map(period => ({
@@ -55,26 +55,12 @@ const BikeDetails = () => {
         console.error("Network error:", error);
       }
     };
-    const fetchAverageRating = async () => {
-      try {
-        const response = await fetch(`http://localhost:8080/api/feedback/average-ratings/${modelId}`);
-        if (response.ok) {
-          const avgRating = await response.json();
-          setAverageRating(avgRating);
-        } else {
-          console.log('Failed to fetch average rating');
-        }
-      } catch (error) {
-        console.error('Error fetching average rating:', error);
-      }
-    };
 
-    fetchBikeModel();
+    fetchEquipment();
     fetchUnavailableDates();
-    fetchAverageRating();
-  }, [modelId]);
+  }, [equipmentModelId]);
 
-  const minimumRentalTime = addHours(startOfDay(new Date()), 6); 
+  const minimumRentalTime = addHours(new Date(), 6);
 
   const isDateUnavailable = (date) => {
     const checkDate = startOfDay(new Date(date)); 
@@ -95,9 +81,9 @@ const BikeDetails = () => {
     const token = localStorage.getItem("jwtToken");
 
     if (!token) {
-        navigate("/login");
-        alert("You must be logged in to rent a bike.");
-        return;
+      navigate("/login");
+      alert("You must be logged in to rent equipment.");
+      return;
     }
 
     const rentalDetails = {
@@ -105,33 +91,33 @@ const BikeDetails = () => {
       endDate: setHours(setMinutes(setSeconds(rentalDates.endDate, 59), 59), 23).toISOString(),
   };
 
-  try {
+    try {
       const response = await fetch(
-          `http://localhost:8080/api/rentals/createRental/${modelId}`,
-          {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify(rentalDetails),
-          }
+        `http://localhost:8080/api/equipmentRentals/createEquipmentRental/${equipmentModelId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(rentalDetails),
+        }
       );
 
       if (response.ok) {
-          setSuccessMessage("Bike rental created successfully! Awaiting admin approval.");
+        setSuccessMessage("Equipment rental created successfully! Awaiting admin approval.");
       } else {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to create bike rental.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create equipment rental.");
       }
-  } catch (error) {
+    } catch (error) {
       setErrorMessage(error.message || "Network error, please try again later.");
-  }
-};
-  
-  const mapsLink = bikeModel?.locationAddress
+    }
+  };
+
+  const mapsLink = equipmentModel?.locationAddress
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        bikeModel.locationAddress
+        equipmentModel.locationAddress
       )}`
     : "#";
     const CustomInput = React.forwardRef(({ value, onClick, label }, ref) => (
@@ -152,46 +138,22 @@ const BikeDetails = () => {
         />
       </div>
     ));    
-const fetchFeedbacks = async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/feedback/detailsFeedback/${modelId}`);
-            if (response.ok) {
-                const data = await response.json();
-                setFeedbacks(data);
-                setShowFeedbacks(true);
-            } else {
-                console.error('Failed to fetch feedback');
-                setFeedbacks([]);
-            }
-        } catch (error) {
-            console.error('Error fetching feedback:', error);
-            setFeedbacks([]);
-        }
-    };
-
-    const toggleFeedbacks = () => {
-      if (showFeedbacks) {
-        setShowFeedbacks(false);
-      } else {
-        fetchFeedbacks();
-      }
-    };
 
   return (
-    <div className="bike-details-container">
-      <h2>Rent Bike - {bikeModel?.bikeModel}</h2>
-      {bikeModel ? (
-        <div className="bike-info-container">
-          <div className="bike-image-container">
+    <div className="equipment-details-container">
+      <h2>Rent Equipment - {equipmentModel?.equipmentModel}</h2>
+      {equipmentModel ? (
+        <div className="equipment-info-container">
+          <div className="equipment-image-container">
             <img
-              src={bikeModel.imageURL}
-              alt={bikeModel.bikeModel}
-              className="bike-image"
+              src={equipmentModel.imageURL}
+              alt={equipmentModel.equipmentModel}
+              className="equipment-image"
             />
           </div>
-          <div className="bike-details">
-            <h3 className="bike-title">{bikeModel.bikeModel}</h3>
-            <p className="bike-description">{bikeModel.bikeDescription}</p>
+          <div className="equipment-details">
+            <h3 className="equipment-title">{equipmentModel.equipmentModel}</h3>
+            <p className="equipment-description">{equipmentModel.equipmentDescription}</p>
             <p className="location-address">
               <a
                 href={mapsLink}
@@ -199,14 +161,13 @@ const fetchFeedbacks = async () => {
                 rel="noopener noreferrer"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <i className="bi bi-geo-alt"></i> {bikeModel.locationAddress}
-              </a>
-            </p>
+                <i className="bi bi-geo-alt"></i> {equipmentModel.locationAddress}
+              </a></p>
             <p className="price-per-day">
               <span>
                 <strong>Price per day: </strong>
               </span>
-              <span>{bikeModel.pricePerDay} RON</span>
+              <span>{equipmentModel.pricePerDay} RON</span>
             </p>
             <form onSubmit={handleSubmit} className="rental-form">
               <div className="form-group">
@@ -233,44 +194,22 @@ const fetchFeedbacks = async () => {
                   maxDate={addDays(new Date(), 60)}
                 />
               </div>
-              <div className="ratings-and-feedback">
-              <div>
-                <p className="average-rating">
-                  <strong>Reviews</strong>
-                  <div onClick={toggleFeedbacks}>
-                    <StarRating rating={Math.round(averageRating)} setRating={() => {}} />
-                  </div>
-                </p>
-              </div>
-              {showFeedbacks && (
-                <div className="feedback-section">
-                  {feedbacks.map(feedback => (
-                    <div key={feedback.feedbackId} className="feedback-entry">
-                      <p><strong>{feedback.username}</strong> - {new Date(feedback.feedbackDate).toLocaleString()}</p>
-                      <StarRating rating={feedback.rating} setRating={() => {}} />
-                      <p>{feedback.feedbackText}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
               {errorMessage && (
                 <div className="error-message">{errorMessage}</div>
               )}
               {successMessage && (
                 <div className="success-message">{successMessage}</div>
               )}
-              <button type="submit" className="btn btn-primary">
-                Rent
-              </button>
+              <button type="submit" className="btn btn-primary">Rent Equipment</button>
             </form>
           </div>
         </div>
       ) : (
-        <p>Loading bike details...</p>
+        <p>Loading equipment details...</p>
       )}
     </div>
   );
 };
 
-export default BikeDetails;
+export default EquipmentDetails;
+

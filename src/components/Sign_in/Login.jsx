@@ -47,8 +47,16 @@ function Login() {
 
       if (response.ok) {
         localStorage.setItem('jwtToken', data.token); 
+        localStorage.setItem('userRole', data.userRole); // Storing user role
+          console.log("UserRole:", data.userRole);
         login(data.token);
-        navigate('/bikes-page'); 
+        if (data.userRole === "ADMIN") { 
+          console.log("User is admin");
+          navigate('/bikes-page');
+        } else {
+          console.log("User is not admin");
+          navigate('/bikes-page');
+        }
       } else {
         setLoginErrors({ form: data.message || "Login failed, please try again." });
       }
@@ -56,7 +64,6 @@ function Login() {
       setLoginErrors({ form: error.message || "Network error, please try again later." });
     }
   };
-  
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
