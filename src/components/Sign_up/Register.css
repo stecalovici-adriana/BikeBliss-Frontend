@@ -1,24 +1,70 @@
 .signup-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  padding: 0 10px;
+  background: #fff;
+  overflow: hidden;
+  padding-top: 80px;
+}
+.signup-content {
+  display: flex;
+  width: 80%; /* Ajustați după necesitate */
+  max-width: 1000px; /* Ajustați după necesitate */
+  max-height: 650px; /* Ajustați înălțimea maximă după necesitate */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 2px solid rgb(92, 214, 236);
+  position: relative;
+}
+.signup-image {
+  border-right: 2px solid rgb(73, 175, 239);
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0.9;
+}
+
+.signup-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fixed-gif {
+  position: absolute;
+  top: 20px;
+  right: 7cm;
+  width: 100px; 
+  height: 100px; 
+  background: url('https://cdn.pixabay.com/animation/2023/03/10/20/17/20-17-17-969_512.gif') no-repeat center center;
+  background-size: contain;
+  z-index: 2;
 }
 
 .signup-form {
-  width: 90%;
-  max-width: 400px;
-  padding: 2rem;
-  border-radius: 8px;
+  max-width: 420px;
+  flex: 1;
+  padding: 50px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #FFF; 
+  background-color: rgb(199, 240, 245);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
 }
-
+.signup-form h2 {
+  margin-bottom: 20px;
+}
 .input-group {
-  margin-bottom: 16px;
+  margin-bottom: 1px;
   display: flex;
   align-items: center;
-  border: 2px solid #ced4da;
+  border: 2px solid rgb(111, 216, 221) !important;
   border-radius: 4px;
   overflow: hidden; 
 }
@@ -26,20 +72,23 @@
 .input-icon {
   padding: 0 12px;
   color: #6c757d;
+  background-color: transparent;
 }
 
 .form-control {
   flex-grow: 1;
-  padding: 12px 8px;
+  padding: 8px 6px;
   border: none; 
+  background-color: transparent !important;
 }
 
 .form-control:-webkit-autofill,
 .form-control:-webkit-autofill:hover, 
 .form-control:-webkit-autofill:focus, 
 .form-control:-webkit-autofill:active  {
-  -webkit-box-shadow: 0 0 0px 1000px #FFF inset;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
   transition: background-color 5000s ease-in-out 0s;
+  opacity: 0.5;
 }
 
 .form-control:focus {
@@ -49,8 +98,8 @@
 
 .error-text {
   color: #d9534f;
-  font-size: 0.875rem;
-  margin-top: 8px; 
+  font-size: 10rem;
+  margin-top: 6px !important; 
   display: block;
 }
 
@@ -84,7 +133,11 @@
   text-decoration: none;
   outline: none; 
 }
+
 .password-requirements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
   padding: 0;
   margin-top: 4px; 
   list-style: none;
@@ -109,11 +162,4 @@
 
 .invalid-mark {
   color: red;
-}
-
-@media (max-width: 768px) {
-  .signup-form {
-    width: 95%;
-    border-radius: 0;
-  }
 }

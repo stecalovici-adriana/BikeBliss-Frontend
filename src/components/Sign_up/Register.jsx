@@ -27,7 +27,6 @@ function Register() {
       password: "",
       confirmPassword: "",
     });
-    // Poți de asemenea să resetezi și alte stări dacă este necesar
     setFormErrors({});
     setPasswordStrength([]);
     setShowPasswordRequirements(true);
@@ -162,7 +161,12 @@ function Register() {
 
   return (
     <div className="signup-container">
+      <div className="signup-content">
+      <div className="signup-image">
+        <img src="https://t4.ftcdn.net/jpg/08/21/27/13/360_F_821271356_MPOMplDDyGLnqsu0PRvthY60476IfRcK.jpg" alt="Signup" />
+      </div>
       <form onSubmit={handleSubmit} className="signup-form">
+      <div className="fixed-gif"></div>
         <h2 className="text-center mb-4">Sign up</h2>
         <div className="mb-3 position-relative">
           <div className="input-group">
@@ -313,6 +317,7 @@ function Register() {
         </div>
       </form>
     </div>
+  </div>
   );
 }
 

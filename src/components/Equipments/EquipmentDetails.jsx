@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./EquipmentDetails.css"; 
 import { addDays, addHours, startOfDay, endOfDay, setHours, setMinutes, setSeconds } from "date-fns";
+import StarRating from '../Feedback/StarRating';
 
 const EquipmentDetails = () => {
   const { equipmentModelId } = useParams();
@@ -14,8 +15,11 @@ const EquipmentDetails = () => {
     endDate: "",
   });
   const [unavailableDates, setUnavailableDates] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [showFeedbacks, setShowFeedbacks] = useState(false);
 
   useEffect(() => {
     const fetchEquipment = async () => {
@@ -55,12 +59,27 @@ const EquipmentDetails = () => {
         console.error("Network error:", error);
       }
     };
+    const fetchAverageRating = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/feedbackEq/average-ratings/${equipmentModelId}`);
+        if (response.ok) {
+          const avgRating = await response.json();
+          setAverageRating(avgRating);
+        } else {
+          console.log('Failed to fetch average rating');
+        }
+      } catch (error) {
+        console.error('Error fetching average rating:', error);
+      }
+    };
 
     fetchEquipment();
     fetchUnavailableDates();
+    fetchAverageRating();
   }, [equipmentModelId]);
 
-  const minimumRentalTime = addHours(new Date(), 6);
+  const minimumRentalTime = addHours(startOfDay(new Date()), 6);
+  const maximumRentalDays = 14;
 
   const isDateUnavailable = (date) => {
     const checkDate = startOfDay(new Date(date)); 
@@ -85,7 +104,19 @@ const EquipmentDetails = () => {
       alert("You must be logged in to rent equipment.");
       return;
     }
+    const startDate = rentalDates.startDate;
+    const endDate = rentalDates.endDate;
 
+    if (!startDate || !endDate) {
+      setErrorMessage("Please select both start and end dates.");
+      return;
+    }
+
+    const daysBetween = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    if (daysBetween < 1 || daysBetween > maximumRentalDays) {
+      setErrorMessage(`The rental period must be between 1 and ${maximumRentalDays} days.`);
+      return;
+    }
     const rentalDetails = {
       startDate: setHours(setMinutes(setSeconds(rentalDates.startDate, 0), 0), 6).toISOString(),
       endDate: setHours(setMinutes(setSeconds(rentalDates.endDate, 59), 59), 23).toISOString(),
@@ -138,7 +169,30 @@ const EquipmentDetails = () => {
         />
       </div>
     ));    
+const fetchFeedbacks = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/feedbackEq/detailsFeedback/${equipmentModelId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFeedbacks(data);
+        setShowFeedbacks(true);
+      } else {
+        console.error('Failed to fetch feedback');
+        setFeedbacks([]);
+      }
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      setFeedbacks([]);
+    }
+  };
 
+  const toggleFeedbacks = () => {
+    if (showFeedbacks) {
+      setShowFeedbacks(false);
+    } else {
+      fetchFeedbacks();
+    }
+  };
   return (
     <div className="equipment-details-container">
       <h2>Rent Equipment - {equipmentModel?.equipmentModel}</h2>
@@ -163,11 +217,16 @@ const EquipmentDetails = () => {
               >
                 <i className="bi bi-geo-alt"></i> {equipmentModel.locationAddress}
               </a></p>
-            <p className="price-per-day">
+              <p className="price-per-day">
               <span>
                 <strong>Price per day: </strong>
               </span>
-              <span>{equipmentModel.pricePerDay} RON</span>
+              <span>
+                {equipmentModel.oldPricePerDay && (
+                  <span className="old-price">{equipmentModel.oldPricePerDay} RON</span>
+                )}
+                <span className="current-price">{equipmentModel.pricePerDay} RON</span>
+              </span>
             </p>
             <form onSubmit={handleSubmit} className="rental-form">
               <div className="form-group">
@@ -193,6 +252,27 @@ const EquipmentDetails = () => {
                   minDate={rentalDates.startDate || new Date()}
                   maxDate={addDays(new Date(), 60)}
                 />
+              </div>
+              <div className="ratings-and-feedback">
+                <div>
+                  <div className="average-rating">
+                    <strong>Reviews</strong>
+                    <div onClick={toggleFeedbacks}>
+                      <StarRating rating={Math.round(averageRating)} setRating={() => {}} />
+                    </div>
+                  </div>
+                </div>
+                {showFeedbacks && (
+                  <div className="feedback-section">
+                    {feedbacks.map(feedback => (
+                      <div key={feedback.feedbackId} className="feedback-entry">
+                        <p><strong>{feedback.username}</strong> - {new Date(feedback.feedbackDate).toLocaleString()}</p>
+                        <StarRating rating={feedback.rating} setRating={() => {}} />
+                        <p>{feedback.feedbackText}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               {errorMessage && (
                 <div className="error-message">{errorMessage}</div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './ResetPassword.css';
 
@@ -13,6 +13,17 @@ function ResetPassword() {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(null);
   const [message, setMessage] = useState('');
+  const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+    if (redirect) {
+      const timer = setTimeout(() => {
+        navigate('/login');
+      }, 60000); // 60000 ms = 1 minute
+
+      return () => clearTimeout(timer); // Curăță timer-ul dacă componenta este demontată
+    }
+  }, [redirect, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,16 +77,21 @@ function ResetPassword() {
       });
   
       if (response.ok) {
-        const responseData = await response.json();
+        const responseData = await response.json().catch(() => {
+          return {}; 
+        });
         if (responseData.token) {
-          localStorage.setItem('jwtToken', responseData.token); 
+          localStorage.setItem('jwtToken', responseData.token);
           setMessage('Your password has been reset successfully. Please login with your new password.');
-          navigate('/login');
+          setRedirect(true);
         } else {
-          setMessage('Failed to reset password. No token received.');
+          setMessage('Password has been reset successfully. Please login with your new password.');
+          setRedirect(true);
         }
       } else {
-        const errorResponse = await response.json();
+        const errorResponse = await response.json().catch(() => {
+          return { message: 'Failed to reset password. Please try again later.' }; 
+        });
         setMessage(errorResponse.message || 'Failed to reset password. Please try again later.');
       }
     } catch (error) {
@@ -86,8 +102,13 @@ function ResetPassword() {
 
   return (
     <div className="reset-password-container">
-      <h2 className="text-center mb-4">Reset Password</h2>
+      <div className="reset-content">
+      <div className="login-image">
+        <img src="https://t4.ftcdn.net/jpg/08/21/27/13/360_F_821271356_MPOMplDDyGLnqsu0PRvthY60476IfRcK.jpg" alt="Login" />
+      </div>
       <form onSubmit={handleSubmit} className="reset-password-form">
+      <div className="fixed-gif"></div>
+      <h2 className="text-center mb-4">Reset Password</h2>
         <div className="mb-3 position-relative">
           <div className="input-group">
             <i className="bi bi-lock-fill input-icon"></i>
@@ -140,10 +161,12 @@ function ResetPassword() {
             Reset Password
           </button>
         </div>
-      </form>
-      {!passwordMismatch && message && (
+        {!passwordMismatch && message && (
         <div className="alert-message">{message}</div>
       )}
+      </form>
+      
+    </div>
     </div>
   );
 }

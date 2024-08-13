@@ -12,13 +12,15 @@ import BikesPage from './components/Bikes/BikesPage';
 import BikeDetails from './components/Bikes/BikeDetails';
 import EquipmentDetails from './components/Equipments/EquipmentDetails';
 import OwnerDashboard from './components/Owner/OwnerDashboard';
+import About from './components/InfoApp/About';
 
 function App() {
   return (
     <Router>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Navigate replace to="/bikes-page" />} />
+        <Route path="/" element={<Navigate replace to="/home" />} />
+        <Route path="/home" element={<About />} />
         <Route path="/signup" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />

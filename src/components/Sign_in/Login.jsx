@@ -1,14 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Login.css"; 
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 function Login() {
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: ""
-  });
+  const [credentials, setCredentials] = useState({username: "", password: ""});
   const { login } = useAuth(); 
   const [loginErrors, setLoginErrors] = useState({});
   const navigate = useNavigate();
@@ -20,12 +16,8 @@ function Login() {
 
   const validateForm = () => {
     const errors = {};
-    if (!credentials.username.trim()) {
-      errors.username = "Username is required";
-    }
-    if (!credentials.password) {
-      errors.password = "Password is required";
-    }
+    if (!credentials.username.trim()) { errors.username = "Username is required"; }
+    if (!credentials.password)  {errors.password = "Password is required"; }
     setLoginErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -42,12 +34,11 @@ function Login() {
         },
         body: JSON.stringify(credentials),
       });
-
       const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem('jwtToken', data.token); 
-        localStorage.setItem('userRole', data.userRole); // Storing user role
+        localStorage.setItem('userRole', data.userRole); 
           console.log("UserRole:", data.userRole);
         login(data.token);
         if (data.userRole === "ADMIN") { 
@@ -66,9 +57,13 @@ function Login() {
   };
   return (
     <div className="login-container">
+      <div className="login-content">
+      <div className="login-image">
+        <img src="https://t4.ftcdn.net/jpg/08/21/27/13/360_F_821271356_MPOMplDDyGLnqsu0PRvthY60476IfRcK.jpg" alt="Login" />
+      </div>
       <form onSubmit={handleSubmit} className="login-form">
-        <h2 className="text-center mb-4">Sign in</h2>
-                <div className="mb-3 position-relative">
+      <div className="fixed-gif"></div>
+        <h2 className="text-center mb-4">Sign in</h2><div className="mb-3 position-relative">
           <div className="input-group">
             <i className="bi bi-person-badge-fill input-icon"></i>
             <input
@@ -79,12 +74,9 @@ function Login() {
               placeholder="Username"
               value={credentials.username}
               onChange={handleChange}
-              required
-            />
+              required/>
           </div>
-          {loginErrors.username && (
-            <div className="error-text">{loginErrors.username}</div>
-          )}
+          {loginErrors.username && (<div className="error-text">{loginErrors.username}</div>)}
         </div>
         <div className="mb-3 position-relative">
           <div className="input-group">
@@ -97,32 +89,25 @@ function Login() {
               placeholder="Password"
               value={credentials.password}
               onChange={handleChange}
-              required
-            />
+              required/>
             </div>
-          {loginErrors.password && (
-            <div className="error-text">{loginErrors.password}</div>
-          )}
+            {loginErrors.password && (<div className="error-text">{loginErrors.password}</div>)}
         </div>
-        {loginErrors.form && (
-          <div className="error-text">{loginErrors.form}</div>
-        )}
+        {loginErrors.form && (<div className="error-text">{loginErrors.form}</div>)}
         <div className="forgot-password-link text-center">
           <Link to="/forgot-password" className="link-forgot-password">Forgot password?</Link>
         </div>
         <div className="d-grid gap-2">
-          <button type="submit" className="btn btn-primary">
-            Sign in
-          </button>
+          <button type="submit" className="btn btn-primary">Sign in</button>
         </div>
         <div className="login-footer">
-        <div className="signup-link text-center">
+          <div className="signup-link text-center">
           Don't have an account? <Link to="/signup" className="link-signup">Sign up</Link>
+          </div>
         </div>
-      </div>
       </form>
-    </div>
+      </div>
+      </div>
   );
 }
-
 export default Login;

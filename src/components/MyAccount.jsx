@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect} from "react";
+import { useNavigate} from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
 import "./MyAccount.css";
 import FeedbackModal from './Feedback/FeedbackModal';
@@ -9,7 +9,7 @@ function MyAccount() {
   const [userDetails, setUserDetails] = useState(null);
   const [rentals, setRentals] = useState([]);
   const [editShow, setEditShow] = useState(false);
-  const [showRentals, setShowRentals] = useState(false);
+  const [showRentals, setShowRentals] = useState(true);
   const [editFormData, setEditFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,11 +25,17 @@ function MyAccount() {
   const [showPendingRentals, setShowPendingRentals] = useState(false);
   const [showCompletedRentals, setShowCompletedRentals] = useState(false);
   const [completedRentals, setCompletedRentals] = useState([]);
+  const [equipmentRentals, setEquipmentRentals] = useState([]);
+  const [activeEquipmentRentals, setActiveEquipmentRentals] = useState([]);
+  const [pendingEquipmentRentals, setPendingEquipmentRentals] = useState([]);
+  const [completedEquipmentRentals, setCompletedEquipmentRentals] = useState([]);
   const [feedbackModalShow, setFeedbackModalShow] = useState(false);
   const [selectedRentalForFeedback,setSelectedRentalForFeedback] = useState(null);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [existingFeedback, setExistingFeedback] = useState(null);
-
+  const [showProfile, setShowProfile] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState('');
+  
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     if (!token) {
@@ -80,7 +86,23 @@ function MyAccount() {
         console.error("Fetching rentals failed:", error);
       }
     };
-
+    const fetchEquipmentRentals = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/equipmentRentals/user-rentals",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const rentalData = await response.json();
+        setEquipmentRentals(rentalData);
+      } catch (error) {
+        console.error("Fetching equipment rentals failed:", error);
+      }
+    };
     const fetchActiveRentals = async () => {
       try {
         const response = await fetch(
@@ -98,7 +120,23 @@ function MyAccount() {
         console.error("Error fetching active rentals:", error);
       }
     };
-
+    const fetchActiveEquipmentRentals = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/equipmentRentals/active-rentals",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch active equipment rentals");
+        const data = await response.json();
+        setActiveEquipmentRentals(data);
+      } catch (error) {
+        console.error("Error fetching active equipment rentals:", error);
+      }
+    };
     const fetchPendingRentals = async () => {
       try {
         const response = await fetch(
@@ -116,7 +154,23 @@ function MyAccount() {
         console.error("Error fetching pending rentals:", error);
       }
     };
-
+    const fetchPendingEquipmentRentals = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/equipmentRentals/pending-rentals",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch pending equipment rentals");
+        const data = await response.json();
+        setPendingEquipmentRentals(data);
+      } catch (error) {
+        console.error("Error fetching pending equipment rentals:", error);
+      }
+    };
     const fetchCompletedRentals = async () => {
       try {
         const response = await fetch(
@@ -134,46 +188,33 @@ function MyAccount() {
         console.error("Error fetching completed rentals:", error);
       }
     };
-
-    fetchUserDetails();
-    fetchRentals();
-    fetchActiveRentals();
-    fetchPendingRentals();
-    fetchCompletedRentals();
-  }, [navigate]);
-
-  useEffect(() => {
-    const fetchAllRentals = async () => {
+    const fetchCompletedEquipmentRentals = async () => {
       try {
-        const responses = await Promise.all([
-          fetch("http://localhost:8080/api/rentals/active-rentals", {
+        const response = await fetch(
+          "http://localhost:8080/api/equipmentRentals/completed-rentals",
+          {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
             },
-          }),
-          fetch("http://localhost:8080/api/rentals/pending-rentals", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          }),
-          fetch("http://localhost:8080/api/rentals/completed-rentals", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          }),
-        ]);
-
-        const data = await Promise.all(
-          responses.map((response) => response.json())
+          }
         );
-
-        setRentals(data.flat());
+        if (!response.ok) throw new Error("Failed to fetch completed equipment rentals");
+        const data = await response.json();
+        setCompletedEquipmentRentals(data);
       } catch (error) {
-        console.error("Error fetching all rentals:", error);
+        console.error("Error fetching completed equipment rentals:", error);
       }
     };
 
-    fetchAllRentals();
+    fetchUserDetails();
+    fetchRentals();
+    fetchEquipmentRentals();
+    fetchActiveRentals();
+    fetchActiveEquipmentRentals();
+    fetchPendingRentals();
+    fetchPendingEquipmentRentals();
+    fetchCompletedRentals();
+    fetchCompletedEquipmentRentals();
   }, [navigate]);
 
   const handleShowEdit = () => setEditShow(true);
@@ -204,8 +245,6 @@ function MyAccount() {
       return;
     }
 
-    console.log(`Updating user details for ID: ${userDetails.userId}`); 
-
     try {
       const response = await fetch(
         `http://localhost:8080/api/users/${userDetails.userId}`,
@@ -229,8 +268,13 @@ function MyAccount() {
 
       const updatedUser = await response.json();
       setUserDetails(updatedUser);
-      handleCloseEdit();
-      alert("User details updated successfully.");
+      setUpdateMessage("User details updated successfully. Please login again.");
+      setTimeout(() => {
+        handleCloseEdit();
+        setUpdateMessage('');
+        navigate("/login");
+
+      }, 10000);
     } catch (error) {
       console.error("Failed to update user details:", error);
       alert("An error occurred while updating user details.");
@@ -250,39 +294,46 @@ function MyAccount() {
     }
     setShowRentalDetails(true);
   };
-  
 
   const handleCloseRentalDetails = () => {
     setShowRentalDetails(false);
     setSelectedRental(null);
   };
   const handleCancelRental = async () => {
-    if (!selectedRental || !selectedRental.rentalId) {
+    if (!selectedRental || (!selectedRental.rentalId && !selectedRental.equipmentRentalId)) {
         alert('No rental selected or rental ID is missing.');
         return;
     }
 
-    const token = localStorage.getItem("jwtToken");
-    console.log(`Attempting to cancel rental with ID: ${selectedRental.rentalId}`); 
+    const rentalId = selectedRental.rentalId;
+    const equipmentRentalId = selectedRental.equipmentRentalId;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/rentals/cancelRental/${selectedRental.rentalId}`, {
+        const url = rentalId
+            ? `http://localhost:8080/api/rentals/cancelRental/${rentalId}`
+            : `http://localhost:8080/api/equipmentRentals/cancelEquipmentRental/${equipmentRentalId}`;
+
+        const response = await fetch(url, {
             method: "DELETE",
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,
                 'Content-Type': 'application/json'
             },
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error(`Failed to cancel rental: ${errorData.message}`, errorData);
-            alert(`Failed to cancel rental: ${errorData.message}`);
+            const errorText = await response.text(); 
+            try {
+                const errorData = JSON.parse(errorText);
+                alert(`Failed to cancel rental: ${errorData.message}`);
+            } catch (e) {
+                alert(`Failed to cancel rental: ${errorText}`);
+            }
             return;
         }
 
         alert('Rental canceled successfully.');
-        setRentals(prevRentals => prevRentals.filter(rental => rental.rentalId !== selectedRental.rentalId));
+        setRentals(prevRentals => prevRentals.filter(rental => rental.rentalId !== rentalId && rental.equipmentRentalId !== equipmentRentalId));
         setSelectedRental(null);
     } catch (error) {
         console.error("An error occurred while canceling the rental:", error);
@@ -293,7 +344,11 @@ function MyAccount() {
 const handleFeedbackClick = async (event, rental) => {
   event.stopPropagation();
   try {
-    const response = await fetch(`http://localhost:8080/api/feedback/${rental.rentalId}`, {
+    const url = rental.bikeModel
+      ? `http://localhost:8080/api/feedback/${rental.rentalId}`
+      : `http://localhost:8080/api/feedbackEq/${rental.equipmentRentalId}`;
+    
+    const response = await fetch(url, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
       }
@@ -303,13 +358,12 @@ const handleFeedbackClick = async (event, rental) => {
       throw new Error('Network response was not ok');
     }
 
-    const text = await response.text(); // Read response body as text first to check if it's empty
+    const text = await response.text();
     if (!text) {
-      console.log('No feedback data available.');
       setFeedbackSubmitted(false);
       setExistingFeedback(null);
     } else {
-      const feedbackData = JSON.parse(text); // Safely parse JSON only if there is data
+      const feedbackData = JSON.parse(text);
       if (feedbackData.length > 0) {
         setFeedbackSubmitted(true);
         setExistingFeedback({
@@ -328,18 +382,21 @@ const handleFeedbackClick = async (event, rental) => {
   setFeedbackModalShow(true);
 };
 
-
 const updateRentalsAfterFeedback = (rentalId) => {
     setCompletedRentals(completedRentals.map(rental => {
       if (rental.rentalId === rentalId) {
-        return { ...rental, feedbackSubmitted: true }; // Add this property to track feedback submission
+        return { ...rental, feedbackSubmitted: true }; 
       }
       return rental;
     }));
   };
-  const handleFeedbackSubmit = async (rentalId, feedback) => {
+  const handleFeedbackSubmit = async (rentalId, feedback, isBike) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/feedback/submit/${rentalId}`, {
+      const url = isBike
+        ? `http://localhost:8080/api/feedback/submit/${rentalId}`
+        : `http://localhost:8080/api/feedbackEq/submit/${rentalId}`;
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -353,10 +410,10 @@ const updateRentalsAfterFeedback = (rentalId) => {
   
       if (response.ok) {
         alert('Feedback submitted successfully');
-        setFeedbackSubmitted(true); // Indicate that feedback has now been submitted
-        setExistingFeedback(feedback); // Update the existing feedback
-        setFeedbackModalShow(false); // Close the modal
-        updateRentalsAfterFeedback(rentalId); // Optionally update the rental list
+        setFeedbackSubmitted(true); 
+        setExistingFeedback(feedback); 
+        setFeedbackModalShow(false); 
+        updateRentalsAfterFeedback(rentalId); 
       } else {
         const errorData = await response.json();
         alert(`Failed to submit feedback: ${errorData.message || 'An error occurred'}`);
@@ -371,13 +428,22 @@ const updateRentalsAfterFeedback = (rentalId) => {
     return <div>Loading...</div>;
   }
 
+  const combinedRentals = [...rentals, ...equipmentRentals];
+  const combinedActiveRentals = [...activeRentals, ...activeEquipmentRentals];
+  const combinedPendingRentals = [...pendingRentals, ...pendingEquipmentRentals];
+  const combinedCompletedRentals = [...completedRentals, ...completedEquipmentRentals];
+
   return (
-    <div className="my-account-container">
+    <div className="dasboard-cont">
+      <div className="content-container">
       <div className="user-details-section">
-        <div className="userAvatar">
-          {userDetails.firstName[0] +
-            (userDetails.lastName ? userDetails.lastName[0] : "")}
-        </div>
+      <p className="sidebar-title">User</p>
+        <img
+          src="https://icons.veryicon.com/png/o/internet--web/prejudice/user-128.png"
+          alt="User Icon"
+          className="user-icon"
+        />
+
         <div className="header-section">
           <h2>Welcome {userDetails.firstName}, </h2>
           <i
@@ -387,26 +453,33 @@ const updateRentalsAfterFeedback = (rentalId) => {
           ></i>{" "}
         </div>
         <Button
-          onClick={handleShowEdit}
-          variant="outline-secondary"
-          className="account-settings-button"
-          style={{ margin: "10px 0" }}
-        >
-          <i className="bi bi-gear-fill"></i> Account settings
-          <i className="bi bi-caret-right-fill"></i>
-        </Button>
+  onClick={() => {
+    setShowProfile(true);
+    setShowRentals(false);
+    setShowActiveRentals(false);
+    setShowPendingRentals(false);
+    setShowCompletedRentals(false);
+  }}
+  variant="outline-secondary"
+  className="account-settings-button"
+  style={{ margin: "10px 0" }}
+>
+  <i className="bi bi-person-fill"></i> Profile
+  <i className="bi bi-caret-right-fill"></i>
+</Button>
         <Button
           onClick={() => {
             setShowRentals(true);
             setShowActiveRentals(false);
             setShowPendingRentals(false);
             setShowCompletedRentals(false);
+            setShowProfile(false);
           }}
           variant="outline-secondary"
           className="account-settings-button"
           style={{ margin: "10px 0" }}
         >
-          <i className="bi bi-bicycle"></i> All Rentals
+          <i className="bi bi-bicycle"></i> Rental History
           <i className="bi bi-caret-right-fill"></i>
         </Button>
         <Button
@@ -415,6 +488,7 @@ const updateRentalsAfterFeedback = (rentalId) => {
             setShowRentals(false);
             setShowPendingRentals(false);
             setShowCompletedRentals(false);
+            setShowProfile(false);
           }}
           variant="outline-secondary"
           className="account-settings-button"
@@ -429,6 +503,7 @@ const updateRentalsAfterFeedback = (rentalId) => {
             setShowRentals(false);
             setShowActiveRentals(false);
             setShowCompletedRentals(false);
+            setShowProfile(false);
           }}
           variant="outline-secondary"
           className="account-settings-button"
@@ -442,6 +517,7 @@ const updateRentalsAfterFeedback = (rentalId) => {
             setShowRentals(false);
             setShowActiveRentals(false);
             setShowPendingRentals(false);
+            setShowProfile(false);
           }}
           variant="outline-secondary"
           className="account-settings-button"
@@ -451,243 +527,316 @@ const updateRentalsAfterFeedback = (rentalId) => {
           <i className="bi bi-caret-right-fill"></i>
         </Button>
       </div>
-      {showActiveRentals && activeRentals.length > 0 && (
-        <div className="rentals-section">
-          <h2>Active Rentals</h2>
-          <ul className="rentals-list">
-            {activeRentals.map((rental, index) => (
-              <li
-                key={index}
-                className="rental-item"
-                onClick={() => handleRentalClick(rental)}
-              >
-                <div className="rental-preview">
-                  <img
-                    src={rental.bikeImageURL}
-                    alt="Bike"
-                    className="rental-bike-image"
-                  />
-                  <div className="rental-brief">
-                    <p>
-                      Bike rented from {formatDate(rental.startDate)} to{" "}
-                      {formatDate(rental.endDate)}
-                    </p>
-                    <i className="bi bi-caret-right-fill expand-icon"></i>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {showPendingRentals && pendingRentals.length > 0 && (
-        <div className="rentals-section">
-          <h2>Pending Rentals</h2>
-          <ul className="rentals-list">
-            {pendingRentals.map((rental, index) => (
-              <li
-                key={index}
-                className="rental-item"
-                onClick={() => handleRentalClick(rental)}
-              >
-                <div className="rental-preview">
-                  <img
-                    src={rental.bikeImageURL}
-                    alt="Bike"
-                    className="rental-bike-image"
-                  />
-                  <div className="rental-brief">
-                    <p>
-                      Bike rented from {formatDate(rental.startDate)} to{" "}
-                      {formatDate(rental.endDate)}
-                    </p>
-                    <i className="bi bi-caret-right-fill expand-icon"></i>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {showCompletedRentals && completedRentals.length > 0 && (
+      {showActiveRentals && (
   <div className="rentals-section">
-    <h2>Completed Rentals</h2>
-    <ul className="rentals-list">
-      {completedRentals.map((rental, index) => (
-        <li key={rental.rentalId} className="rental-item" onClick={() => handleRentalClick(rental)}>
-          <div className="rental-preview">
-            <img src={rental.bikeImageURL} alt="Bike" className="rental-bike-image" />
-            <div className="rental-brief">
-              <p>Bike rented from {formatDate(rental.startDate)} to {formatDate(rental.endDate)}</p>
-              <i className="bi bi-caret-right-fill expand-icon"></i>
+    <h2>Active Rentals</h2>
+    {combinedActiveRentals.length > 0 ? (
+      <ul className="rentals-list">
+        {combinedActiveRentals.map((rental, index) => (
+          <li
+            key={index}
+            className="rental-item"
+            onClick={() => handleRentalClick(rental)}
+          >
+            <div className="rental-preview">
+              <img
+                src={rental.bikeImageURL || rental.equipmentImageURL}
+                alt="Rental"
+                className="rental-bike-image"
+              />
+              <div className="rental-brief">
+                <p>
+                {rental.bikeModel || rental.equipmentModel} rented from {formatDate(rental.startDate)} to{" "}
+                {formatDate(rental.endDate)}
+                </p>
+                <i className="bi bi-caret-right-fill expand-icon"></i>
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="no-rentals-message">You don't have any active rentals yet.</p>
+    )}
   </div>
 )}
-
-      {showRentals && (
-        <div className="rentals-section">
-          <h2>All Rentals</h2>
-          {rentals.length > 0 ? (
-            <ul className="rentals-list">
-              {rentals.map((rental, index) => (
-                <li
-                  key={index}
-                  className="rental-item"
-                  onClick={() => handleRentalClick(rental)}
-                >
-                  <div className="rental-preview">
-                    <img
-                      src={rental.bikeImageURL}
-                      alt="Bike"
-                      className="rental-bike-image"
-                    />
-                    <div className="rental-brief">
-                      <p>
-                        Bike rented from {formatDate(rental.startDate)} to{" "}
-                        {formatDate(rental.endDate)}
-                      </p>
-                      <i className="bi bi-caret-right-fill expand-icon"></i>
+      {showPendingRentals && (
+          <div className="rentals-section">
+            <h2>Pending Rentals</h2>
+            {combinedPendingRentals.length > 0 ? (
+              <ul className="rentals-list">
+                {combinedPendingRentals.map((rental, index) => (
+                  <li
+                    key={index}
+                    className="rental-item"
+                    onClick={() => handleRentalClick(rental)}
+                  >
+                    <div className="rental-preview">
+                      <img
+                        src={rental.bikeImageURL || rental.equipmentImageURL}
+                        alt="Rental"
+                        className="rental-bike-image"
+                      />
+                      <div className="rental-brief">
+                        <p>
+                          {rental.bikeModel || rental.equipmentModel} rented from {formatDate(rental.startDate)} to{" "}
+                          {formatDate(rental.endDate)}
+                        </p>
+                        <i className="bi bi-caret-right-fill expand-icon"></i>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No rentals found.</p>
-          )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-rentals-message">You have no pending rentals.</p>
+            )}
+          </div>
+        )}
+
+        {showCompletedRentals && (
+          <div className="rentals-section">
+            <h2>Completed Rentals</h2>
+            {combinedCompletedRentals.length > 0 ? (
+              <ul className="rentals-list">
+                {combinedCompletedRentals.map((rental, index) => (
+                  <li
+                    key={rental.rentalId}
+                    className="rental-item"
+                    onClick={() => handleRentalClick(rental)}
+                  >
+                    <div className="rental-preview">
+                      <img
+                        src={rental.bikeImageURL || rental.equipmentImageURL}
+                        alt="Rental"
+                        className="rental-bike-image"
+                      />
+                      <div className="rental-brief">
+                        <p>
+                          {rental.bikeModel || rental.equipmentModel} rented from {formatDate(rental.startDate)} to{" "}
+                          {formatDate(rental.endDate)}
+                        </p>
+                        <i className="bi bi-caret-right-fill expand-icon"></i>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-rentals-message">You have no completed rentals.</p>
+            )}
+          </div>
+        )}
+
+        {showRentals && (
+          <div className="rentals-section">
+            <h2>Rental History</h2>
+            {combinedRentals.length > 0 ? (
+              <ul className="rentals-list">
+                {combinedRentals.map((rental, index) => (
+                  <li
+                    key={index}
+                    className="rental-item"
+                    onClick={() => handleRentalClick(rental)}
+                  >
+                    <div className="rental-preview">
+                      <img
+                        src={rental.bikeImageURL || rental.equipmentImageURL}
+                        alt="Rental"
+                        className="rental-bike-image"
+                      />
+                      <div className="rental-brief">
+                        <p>
+                          {rental.bikeModel || rental.equipmentModel} rented from {formatDate(rental.startDate)} to{" "}
+                          {formatDate(rental.endDate)}
+                        </p>
+                        <i className="bi bi-caret-right-fill expand-icon"></i>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>
+                <p className="no-rentals-message">You haven't rented anything yet.</p>
+                <Button
+                  className="link-button"
+                  onClick={() => navigate("/bikes-page")}
+                >
+                  Start Rentals
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+{showProfile && (
+  <div className="profile-section">
+    <div className="profile-header">
+      <h2>Profile</h2>
+      <Button variant="outline-secondary" className="edit-button" onClick={handleShowEdit}>
+        <i className="bi bi-pencil-square"></i>
+      </Button>
+    </div>
+    <p className="section-label">Account Details</p>
+    <hr />
+    <Form>
+      <Form.Group className="mb-3">
+        <div className="info-line">
+          <span className="info-label">First Name:</span> <span className="info-value">{editFormData.firstName}</span>
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <div className="info-line">
+          <span className="info-label">Last Name:</span> <span className="info-value">{editFormData.lastName}</span>
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <div className="info-line">
+          <span className="info-label">Email:</span> <span className="info-value">{editFormData.email}</span>
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <div className="info-line">
+          <span className="info-label">Username:</span> <span className="info-value">{editFormData.username}</span>
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+  <div className="info-line">
+    <span className="info-label">Birth Date:</span>
+    <span className="info-value">{formatDate(editFormData.birthDate)}</span>
+  </div>
+</Form.Group>
+    </Form>
+  </div>
+)}
+<Modal show={editShow} onHide={handleCloseEdit} centered>
+  <Modal.Header closeButton className="edit-modal-header">
+    <Modal.Title className="edit-modal-title">Edit User Details</Modal.Title>
+  </Modal.Header>
+  <Modal.Body className="edit-modal-body">
+    <Form>
+      <Form.Group className="mb-3">
+        <Form.Label className="form-label">First Name</Form.Label>
+        <div className="input-group">
+          <span className="input-group-text icon-no-bg"><i className="bi bi-person"></i></span>
+          <Form.Control
+            type="text"
+            name="firstName"
+            value={editFormData.firstName}
+            onChange={handleChange}
+            className="form-control edit-input"
+          />
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label className="form-label">Last Name</Form.Label>
+        <div className="input-group">
+          <span className="input-group-text icon-no-bg"><i className="bi bi-person"></i></span>
+          <Form.Control
+            type="text"
+            name="lastName"
+            value={editFormData.lastName}
+            onChange={handleChange}
+            className="form-control edit-input"
+          />
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label className="form-label">Email</Form.Label>
+        <div className="input-group">
+          <span className="input-group-text icon-no-bg"><i className="bi bi-envelope"></i></span>
+          <Form.Control
+            type="email"
+            name="email"
+            value={editFormData.email}
+            onChange={handleChange}
+            className="form-control edit-input"
+          />
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label className="form-label">Username</Form.Label>
+        <div className="input-group">
+          <span className="input-group-text icon-no-bg"><i className="bi bi-person-badge"></i></span>
+          <Form.Control
+            type="text"
+            name="username"
+            value={editFormData.username}
+            onChange={handleChange}
+            className="form-control edit-input"
+          />
+        </div>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label className="form-label">Birth Date</Form.Label>
+        <div className="input-group">
+          <span className="input-group-text icon-no-bg"><i className="bi bi-calendar3"></i></span>
+          <Form.Control
+            type="date"
+            name="birthDate"
+            value={editFormData.birthDate}
+            onChange={handleChange}
+            className="form-control edit-input"
+          />
+        </div>
+      </Form.Group>
+    </Form>
+  </Modal.Body>
+  {updateMessage && <div className="update-message">{updateMessage}</div>}
+  <Modal.Footer className="edit-modal-footer">
+    <Button onClick={handleSaveChanges} className="edit-modal-button save-button">Save Changes</Button>
+  </Modal.Footer>
+  </Modal>
+      <Modal show={showRentalDetails} onHide={handleCloseRentalDetails} centered>
+        <Modal.Header closeButton className="rental-modal-header">
+        <Modal.Title className="rental-modal-title">Rental Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="rental-modal-body">
+  {selectedRental && (
+    <div>
+      {selectedRental.bikeModel ? (
+        <>
+          <p><strong>Model:</strong> {selectedRental.bikeModel}</p>
+          <p><strong>Description:</strong> {selectedRental.bikeDescription}</p>
+        </>
+      ) : (
+        <>
+          <p><strong>Model:</strong> {selectedRental.equipmentModel}</p>
+          <p><strong>Description:</strong> {selectedRental.equipmentDescription}</p>
+        </>
+      )}
+      <p><strong>Location:</strong> {selectedRental.locationAddress}</p>
+      <p><strong>Rental Period:</strong>{" "}
+        {formatDate(selectedRental.startDate)} to{" "}
+        {formatDate(selectedRental.endDate)}
+      </p>
+      <p><strong>Total Price:</strong> {selectedRental.totalPrice} RON</p>
+      <p><strong>Status:</strong> {selectedRental.rentalStatus}</p>
+      {selectedRental.rentalStatus === "COMPLETED" && (
+        <Button variant="primary" onClick={(e) => handleFeedbackClick(e, selectedRental)}>Review</Button>
+      )}
+      {selectedRental.rentalStatus === "PENDING" && (
+        <div className="cancel-container">
+          <p>Do you want to cancel this rental?</p>
+          <button className="cancel-button" onClick={handleCancelRental}>Yes</button>
         </div>
       )}
-      <Modal show={editShow} onHide={handleCloseEdit} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit User Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="firstName"
-                value={editFormData.firstName}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastName"
-                value={editFormData.lastName}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={editFormData.email}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={editFormData.username}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Birth Date</Form.Label>
-              <Form.Control
-                type="date"
-                name="birthDate"
-                value={editFormData.birthDate}
-                onChange={handleChange}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseEdit}>
-            {" "}
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSaveChanges}>
-            {" "}
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
-        show={showRentalDetails}
-        onHide={handleCloseRentalDetails}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Rental Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedRental && (
-            <div>
-              <p>
-                <strong>Model:</strong> {selectedRental.bikeModel}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedRental.bikeDescription}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedRental.locationAddress}
-              </p>
-              <p>
-                <strong>Rental Period:</strong>{" "}
-                {formatDate(selectedRental.startDate)} to{" "}
-                {formatDate(selectedRental.endDate)}
-              </p>
-              <p>
-                <strong>Total Price:</strong> {selectedRental.totalPrice} RON
-              </p>
-              <p>
-                <strong>Status:</strong> {selectedRental.rentalStatus}
-              </p>
-              {selectedRental && selectedRental.rentalStatus === "COMPLETED" && (
-  <Button variant="primary" onClick={(e) => handleFeedbackClick(e, selectedRental)}>Review</Button>
-)}
+    </div>
+  )}
+</Modal.Body>
 
-    {selectedRental.rentalStatus === "PENDING" && (
-      <div className="cancel-container">
-      <p>Do you want to cancel this rental?</p>
-      <button
-        className="cancel-button"
-        onClick={() => handleCancelRental(selectedRental.id)}
-      >
-        Yes
-      </button>
-      </div>
-    )}
- 
-</div>
-          )}
-        </Modal.Body>
       </Modal>
       <FeedbackModal
   show={feedbackModalShow}
   onHide={() => setFeedbackModalShow(false)}
-  onSubmit={handleFeedbackSubmit}
-  rental={selectedRentalForFeedback}
+  onSubmit={(feedbackId, feedback, isBike) => handleFeedbackSubmit(feedbackId, feedback, isBike)}
+  rental={selectedRentalForFeedback && selectedRentalForFeedback.bikeModel ? selectedRentalForFeedback : null}
+  equipmentRental={selectedRentalForFeedback && selectedRentalForFeedback.equipmentModel ? selectedRentalForFeedback : null}
   feedbackSubmitted={feedbackSubmitted}
   existingFeedback={existingFeedback}
 />
-
-
+    </div>
     </div>
   );
 }

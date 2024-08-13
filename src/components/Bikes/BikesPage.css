@@ -2,20 +2,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 5px;
 }
-
+.title-and-filters :hover {
+  color: rgb(67, 157, 169);
+}
 .page-title, .filter-button {
   font-size: 1rem; 
-  color: #333; 
+  color: b(42, 147, 161);
   cursor: pointer; 
   padding: 0; 
   margin: 0; 
   display: inline-block; 
   text-decoration: none; 
 }
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #313131;
+  border-radius: 5px;
+  padding: 2px 8px;
+  width: 200px;
+  height: 30px;
+  margin: 10px auto; 
+}
 
+.search-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  padding: 5px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.search-icon {
+  color: #323131;
+  cursor: pointer;
+}
 .page-title {
-  margin-right: 20px; 
+  margin-right: 20px;
+  font-size: 17px; 
+}
+.filter-button {
+  font-size: 17px; 
 }
 
 .page-title:hover, .filter-button:hover {
@@ -30,17 +60,19 @@
 
 .filter-dropdown {
   position: relative;
+  z-index: 2;
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
+  top: 100%;
+  left: 0;
+  background-color: white;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 10; 
   width: 200px;
 }
-
 .filter-dropdown:hover .dropdown-content {
   display: block; 
 }
@@ -92,10 +124,10 @@
 
 .add-model-button-container {
   text-align: center; 
-  margin: 20px 0; 
+  margin: 5px 0; 
 }
 .add-model-button {
-  color: #007bff; 
+  color: rgb(42, 147, 161); 
   background-color: transparent; 
   border: none;
   padding: 8px 16px; 
@@ -106,8 +138,8 @@
 }
 
 .add-model-button:hover, .add-model-button:focus, .add-model-button:active {
-  color: #007bff; 
-  background-color: transparent;
+  color: rgb(7, 172, 180); 
+  background-color: transparent !important;
   box-shadow: none; 
   outline: none;
 }
@@ -118,7 +150,7 @@
 
 @media (max-width: 768px) {
   .bike-card, .equipment-card {
-    width: 90%; /* Adjusts the width to be more responsive on smaller screens */
-    margin: 1rem auto; /* Centers the card and adds vertical space */
+    width: 90%; 
+    margin: 1rem auto; 
   }
 }

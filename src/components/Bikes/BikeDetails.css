@@ -1,13 +1,15 @@
 .bike-details-container {
   max-width: 1200px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #ffffff;
+  height: auto;
+  margin: 90px auto 40px; 
+  background: linear-gradient(to left, rgb(199, 240, 245), #ffffff);
+  border: 2px solid rgb(111, 216, 221) !important;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 40px;
 }
 
 .bike-info-container {
@@ -48,21 +50,24 @@
 .ratings-and-feedback {
   display: flex;
   align-items: start;
-  gap: 20px;  /* Adjust gap as needed */
+  gap: 20px; 
 }
 
 .average-rating {
   flex-grow: 1;
 }
+.average-rating, .star-rating :hover{
+  background-color: transparent !important;
+}
 .feedback-entry .star-rating {
-  font-size: 18px;  /* Larger stars */
+  font-size: 18px;  
 }
 .feedback-section {
-  background-color: #f0f0f0; 
+  background: linear-gradient(to left,rgb(224, 244, 247), #ffffff);
   padding: 15px;
   max-height: 200px;
   overflow-y: auto;
-  width: 400px;  /* Set a fixed width or adjust as needed */
+  width: 400px; 
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border-radius: 5px;
 }
@@ -83,7 +88,7 @@
 }
 .feedback-entry strong {
   color: black;
-  font-size: 16px;  /* Slightly larger font size for usernames */
+  font-size: 16px; 
 }
 .input-group {
   display: flex;
@@ -101,15 +106,16 @@
 
 .calendar-icon {
   padding: 8px;
-  background-color: #fff;
+  background-color: transparent !important;
   border: none;
 }
 
 .rental-form .btn {
-  background-color: #007bff;
+  background-color: rgb(81, 185, 199);;
   border: none;
+  width: 236px;
 }
 
 .rental-form .btn:hover {
-  background-color: #0056b3;
+  background-color: rgb(55, 149, 161);;
 }

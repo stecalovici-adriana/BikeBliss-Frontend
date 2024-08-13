@@ -41,7 +41,12 @@ function ForgotPassword() {
 
   return (
     <div className="forgot-password-container">
+      <div className="forgot-content">
+      <div className="login-image">
+        <img src="https://t4.ftcdn.net/jpg/08/21/27/13/360_F_821271356_MPOMplDDyGLnqsu0PRvthY60476IfRcK.jpg" alt="Login" />
+      </div>
       <form onSubmit={handleSubmit} className="forgot-password-form">
+      <div className="fixed-gif"></div>
         <h2 className="text-center mb-4">Forgot Password</h2>
         <div className="mb-3 position-relative">
           <div className="input-group">
@@ -70,6 +75,7 @@ function ForgotPassword() {
         </div>
         {message && <div className="text-center mt-3">{message}</div>}
       </form>
+    </div>
     </div>
   );
 }

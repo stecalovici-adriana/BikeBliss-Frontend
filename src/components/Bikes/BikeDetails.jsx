@@ -75,6 +75,7 @@ const BikeDetails = () => {
   }, [modelId]);
 
   const minimumRentalTime = addHours(startOfDay(new Date()), 6); 
+  const maximumRentalDays = 14;
 
   const isDateUnavailable = (date) => {
     const checkDate = startOfDay(new Date(date)); 
@@ -96,38 +97,51 @@ const BikeDetails = () => {
 
     if (!token) {
         navigate("/login");
-        alert("You must be logged in to rent a bike.");
         return;
     }
 
-    const rentalDetails = {
-      startDate: setHours(setMinutes(setSeconds(rentalDates.startDate, 0), 0), 6).toISOString(),
-      endDate: setHours(setMinutes(setSeconds(rentalDates.endDate, 59), 59), 23).toISOString(),
-  };
+    const startDate = rentalDates.startDate;
+    const endDate = rentalDates.endDate;
 
-  try {
+    if (!startDate || !endDate) {
+      setErrorMessage("Please select both start and end dates.");
+      return;
+    }
+
+    const daysBetween = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    if (daysBetween < 1 || daysBetween > maximumRentalDays) {
+      setErrorMessage(`The rental period must be between 1 and ${maximumRentalDays} days.`);
+      return;
+    }
+
+    const rentalDetails = {
+      startDate: setHours(setMinutes(setSeconds(startDate, 0), 0), 6).toISOString(),
+      endDate: setHours(setMinutes(setSeconds(endDate, 59), 59), 23).toISOString(),
+    };
+
+    try {
       const response = await fetch(
-          `http://localhost:8080/api/rentals/createRental/${modelId}`,
-          {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify(rentalDetails),
-          }
+        `http://localhost:8080/api/rentals/createRental/${modelId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(rentalDetails),
+        }
       );
 
       if (response.ok) {
-          setSuccessMessage("Bike rental created successfully! Awaiting admin approval.");
+        setSuccessMessage("Bike rental created successfully! Awaiting admin approval.");
       } else {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to create bike rental.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create bike rental.");
       }
-  } catch (error) {
+    } catch (error) {
       setErrorMessage(error.message || "Network error, please try again later.");
-  }
-};
+    }
+  };
   
   const mapsLink = bikeModel?.locationAddress
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -235,12 +249,12 @@ const fetchFeedbacks = async () => {
               </div>
               <div className="ratings-and-feedback">
               <div>
-                <p className="average-rating">
+                <div className="average-rating">
                   <strong>Reviews</strong>
                   <div onClick={toggleFeedbacks}>
                     <StarRating rating={Math.round(averageRating)} setRating={() => {}} />
                   </div>
-                </p>
+                </div>
               </div>
               {showFeedbacks && (
                 <div className="feedback-section">

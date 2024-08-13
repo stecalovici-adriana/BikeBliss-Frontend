@@ -1,92 +1,202 @@
-.my-account-container {
+.dashboard-cont {
   display: flex;
-  justify-content: space-between;
-  margin: 50px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  flex-direction: column;
+  height: 100vh;
 }
-/* Styling for the user details section */
+.sub-navigation {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+.content-container {
+  padding-top: 100px !important;
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  background-color: white;
+}
 .user-details-section {
   flex: 1;
   margin: 0 10px;
-  position: relative; /* Needed for absolute positioning of the avatar */
+  position: relative; 
   max-width: 300px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center align content */
-}
-
-.userAvatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #0056b3;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  font-weight: bold;
-  position: absolute;
-  top: -25px; /* Adjusted to position avatar above the header section */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+  align-items: center; 
 }
 
 .header-section {
   display: flex;
-  justify-content: space-between; /* Ensure spacing between title and icon */
-  width: 100%; /* Use full width available */
-  margin-top: 30px; /* Space below the avatar */
+  justify-content: space-between; 
+  width: 100%; 
+  margin-top: 3px;
 }
 
 .header-section h2 {
   margin: 0;
   flex-grow: 1;
   font-size: 1.4rem;
-  color: #0056b3;
+  color: #080808;
 }
 
-/* Button styling within the user details section */
 .user-details-section button {
-  background-color: #0056b3; /* Button color matches avatar background */
-  color: white;
-  border: none;
+  background: linear-gradient(to bottom left, #ffffff, rgb(145, 233, 236));
+  color: rgb(50, 49, 49);
+  border: 2px solid rgb(111, 216, 221) !important;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  width: 100%; /* Full width to match user data box */
-  margin-top: 20px; /* Space after header section */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Slight shadow for depth */
+  width: 100%;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+}
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-input {
+  border-radius: 0 10px 10px 0;
+  border: 1px solid #00796b;
+  padding: 10px;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+
+.profile-section {
+  flex: 3;
+  padding: 20px;
+  margin-left: 20px;
+  background: linear-gradient(to bottom, #ffffff, rgb(214, 239, 243));
+  border-radius: 4px;
+  border: 2px solid rgb(111, 216, 221) !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.profile-section h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: rgb(38, 39, 39);
+}
+
+.profile-section .section-label {
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 5px; 
+  padding-bottom: 0;
+}
+
+.profile-section .info-line {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 10px 0;
+  display: flex; 
+  justify-content: space-between; 
+}
+
+.profile-section .info-label {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #1f2020;
+  margin-right: 0.5em; 
+}
+
+.profile-section .info-value {
+  font-size: 1.1rem;
+  color: #000;
+  flex: 2; 
+  text-align: left; 
+}
+
+.profile-section hr {
+  border: none;
+  border-top: 1px solid #b6b5b5;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.user-icon {
+  width: 70px; 
+  margin-bottom: 2px; 
 }
 
 .rentals-section {
-  flex: 3; /* Adjust size to fit content */
-  padding: 20px;
-  margin-left: 20px; /* Separation from the user details */
-  background-color: #f8f9fa; /* Light grey background for distinction */
-  border-radius: 5px;
+  flex: 3; 
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: rgb(199, 240, 245);
+  border-radius: 4px;
+  border: 2px solid rgb(111, 216, 221);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  margin-top: 20px;
 }
+.users-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.user-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 500px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease-in-out;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+}
+
+.user-details p {
+  margin: 5px 0;
+  font-size: 18px; 
+  line-height: 1.5;
+}
+
+.user-details p strong {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.rentals-section h2 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #282828;
+}
+
+.sub-navigation a {
+  color: inherit;
+  text-decoration: none;
+  padding: 0 20px; 
+}
+
 
 @media (max-width: 768px) {
   .my-account-container {
-    flex-direction: column; /* Stack sections vertically on smaller screens */
-    align-items: center; /* Center align sections */
+    flex-direction: column;
+    align-items: center;
   }
 
   .user-details-section, .rentals-section {
-    max-width: 100%; /* Take full width on smaller screens */
-    margin: 10px 0; /* Add some margin for spacing */
+    max-width: 100%; 
+    margin: 10px 0; 
   }
 }
 
-/* Styling for the rentals list */
 .rentals-list {
   list-style-type: none;
   padding: 0;
@@ -95,14 +205,14 @@
 
 .rental-item {
   display: flex;
-  align-items: center; /* Align items in the center vertically */
-  border: 1px solid #ccc;
+  align-items: center; 
+  border: 2px solid rgb(111, 216, 221);
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 10px;
-  background-color: #fff;
+  background: linear-gradient(to right, #ffffff, rgb(199, 240, 245));
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  flex-direction: row; /* Align items horizontally */
+  flex-direction: row; 
 }
 
 .rental-item:hover {
@@ -122,119 +232,173 @@
 
 .rental-brief {
   display: flex;
-  justify-content: space-between; /* Distribuie elementele pe axa orizontală */
-  align-items: center; /* Centrează elementele pe axa verticală */
-  width: calc(100% - 180px); /* Ajustează lățimea, scăzând lățimea imaginii */
-  margin-left: 180px; /* Oferă spațiu pentru imagine */
+  justify-content: space-between; 
+  align-items: center;
+  width: calc(100% - 180px); 
+  margin-left: 180px; 
 }
 
 .rental-brief p {
   margin: 0;
-  text-align: left; /* Aliniază textul la stânga */
-  flex-grow: 1; /* Permite textului să ocupe spațiu disponibil */
+  text-align: left; 
+  flex-grow: 1;
 }
 
 .expand-icon {
-  margin-left: auto; /* Așază iconița la capătul drept al containerului său */
+  margin-left: auto; 
 }
 .rental-details {
   border-top: 1px solid #eee;
   margin-top: 10px;
   padding-top: 10px;
 }
-/* Styling for text in the rental details */
+
 .rental-details p {
-  margin: 5px 0; /* Spacing for paragraphs */
-  line-height: 1.6; /* Improving line spacing for readability */
-  color: #333; /* Darker text for better readability */
+  margin: 5px 0;
+  line-height: 1.6; 
+  color: #333; 
 }
 
-/* Enhancing the visual hierarchy of titles in rental details */
 .rental-details strong {
-  font-weight: 600; /* Strong emphasis for labels */
-  color: #0056b3; /* Theme color for titles */
+  font-weight: 600; 
+  color: #1194ab; 
 }
-/* Button styling within the user details section */
+
 .account-settings-button {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Spread content evenly */
-  width: 100%; /* Full width to match the user data box */
-  background-color: #ffffff; /* White background */
-  color: #333333; /* Dark text for visibility */
-  border: 1px solid #cccccc; /* Light gray border */
-  padding: 8px 20px; /* Padding for better touch */
-  border-radius: 5px; /* Rounded corners */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
-  font-size: 16px; /* Slightly larger font */
+  justify-content: space-between; 
+  width: 100%; 
+  background-color: #ffffff; 
+  color: #333333; 
+  border: 1px solid #cccccc;
+  padding: 8px 20px; 
+  border-radius: 5px; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+  font-size: 16px; 
   cursor: pointer;
 }
 
 .bi-gear-fill, .bi-caret-right-fill {
   margin: 0 5px; 
+  color: rgb(61, 61, 61);
 }
 
-/* Ensuring the icons are vertically centered with text */
 .account-settings-button i {
   vertical-align: middle;
 }
-/* Modal custom styling for a more modern look */
-.modal-header {
-  background-color: #f8f9fa; /* Light grey background for the header */
-  border-bottom: 1px solid #dee2e6; /* A subtle border to separate header from body */
-  font-size: 18px; /* Larger font size for the title */
+
+.edit-modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: hsl(173, 100%, 24%);
+}
+.edit-modal-body {
+  background-color: #e0f7fa;
+  padding: 20px;
+}
+.edit-modal-header {
+  background-color: #e0f7fa;
+}
+.edit-modal-footer {
+  background-color: hsl(173, 100%, 24%);
+  border-top: none;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
 }
 
-.modal-title {
-  color: #0056b3; /* Theme color for the title */
-  font-weight: bold; /* Bold font for emphasis */
+.edit-modal-button {
+  border-radius: 10px;
+  font-weight: bold;
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #00796b;
+  border: none;
 }
 
-.modal-body {
-  padding: 20px; /* More padding for better spacing */
+.edit-modal-button:hover {
+  background-color: transparent !important;
+  color: hsl(172, 81%, 19%);
 }
 
 .modal-footer {
-  border-top: 1px solid #dee2e6; /* A subtle border to separate footer from body */
-  padding: 12px 20px; /* Padding adjustment for better spacing */
+  background-color: #e0f7fa; 
 }
-
+.edit-button {
+  border: none;
+}
+.edit-button :hover {
+  background-color: transparent !important;
+}
 .form-control {
-  border-radius: 0.25rem; /* Rounded borders for input fields */
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075); /* Subtle inner shadow for depth */
-  border: 1px solid #ced4da; /* Standard border color */
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f8f9fa;
+  box-shadow: none; 
 }
 
 .form-label {
-  font-weight: 600; /* Slightly bolder labels for better visibility */
-  color: #495057; /* Dark grey for readability */
+  font-weight: bold;
+  color: #004d40;
+}
+.input-group {
+  display: flex;
+  align-items: center;
 }
 
-/* Button styling within the modal footer */
-.btn-primary {
-  background-color: #0056b3; /* Primary theme color for save button */
-  border-color: #004085; /* Darker border color for contrast */
+.icon-no-bg {
+  background-color: transparent;
+  border: none;
+  padding-right: 10px;
+  color: #00796b;
 }
 
-.btn-secondary {
-  background-color: #6c757d; /* Grey color for close button */
-  border-color: #545b62; /* Slightly darker border for contrast */
-}
 .cancel-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Adjust gap as needed */
+  gap: 10px;
 }
 
-.cancel-button {
-  background: none;
-  border: none;
-  color: #dc3545; /* Bootstrap danger color */
-  font-size: 16px;
-  cursor: pointer;
-  text-decoration: none; /* Remove underline */
+.link-button {
+  background: none !important;
+  border: none !important;
+  color: #000 !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+  font-size: 1rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
 }
 
-.cancel-button:hover {
-  color: #a71d2a; /* Darker red for hover */
+.link-button:hover,
+.link-button:focus,
+.link-button:active {
+  text-decoration: none !important;
+  background: none !important; 
+  color: #000 !important; 
+  outline: none !important;
+}
+.rental-modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: hsl(173, 100%, 24%);
+}
+
+.rental-modal-body {
+  background-color: #e0f7fa;
+  padding: 20px;
+}
+
+.rental-modal-header {
+  background-color: #e0f7fa;
+}
+.update-message {
+  color: green;
+  font-size: 1rem;
+  text-align: center;
+  background-color: #e0f7fa;
+  padding: 10px;
+  border-radius: 5px;
 }

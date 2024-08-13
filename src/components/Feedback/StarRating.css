@@ -2,7 +2,6 @@
     display: flex;
     align-items: center;
     font-size: 24px;
-    color: gold;
 }
 
 .star-rating button {
@@ -12,13 +11,13 @@
 }
 
 .star-rating .star {
-    pointer-events: none;
+    color: #e4e5e9;
 }
 
 .star-rating .on .star {
-    color: orange; /* Color for active stars */
+    color: #ffc107
 }
 
 .star-rating .off .star {
-    color: grey; /* Color for inactive stars */
+    color: #e4e5e9;
 }

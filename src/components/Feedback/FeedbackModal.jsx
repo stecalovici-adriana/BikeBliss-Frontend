@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import StarRating from './StarRating';
+import './FeedbackModal.css'; 
 
-function FeedbackModal({ show, onHide, onSubmit, rental, feedbackSubmitted, existingFeedback }) {
+function FeedbackModal({ show, onHide, onSubmit, rental, equipmentRental, feedbackSubmitted, existingFeedback }) {
   const [feedbackText, setFeedbackText] = useState('');
   const [rating, setRating] = useState(0);
 
@@ -33,19 +34,21 @@ function FeedbackModal({ show, onHide, onSubmit, rental, feedbackSubmitted, exis
       alert('Please select a rating.');
       return;
     }
-    // Ensure rental is not null and has a rentalId
     if (rental && rental.rentalId) {
-      onSubmit(rental.rentalId, { text: feedbackText, rating });
-      handleClose();
+      onSubmit(rental.rentalId, { text: feedbackText, rating }, true);
+    } else if (equipmentRental && equipmentRental.equipmentRentalId) {
+      onSubmit(equipmentRental.equipmentRentalId, { text: feedbackText, rating }, false);
     } else {
       alert('No rental selected.');
+      return;
     }
+    handleClose();
   };  
 
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{feedbackSubmitted ? "Your Feedback" : "Provide Feedback"}</Modal.Title>
+        <Modal.Title>{feedbackSubmitted ? "Your Feedback" : "Give Feedback"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -66,7 +69,6 @@ function FeedbackModal({ show, onHide, onSubmit, rental, feedbackSubmitted, exis
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Close</Button>
         {!feedbackSubmitted && (
           <Button variant="primary" onClick={handleSubmit}>Submit Feedback</Button>
         )}

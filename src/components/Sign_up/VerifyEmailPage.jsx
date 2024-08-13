@@ -46,7 +46,6 @@ function VerifyEmailPage() {
   return (
     <div className="verify-email-page">
       <h2>Verifying your email...</h2>
-      {/* You can add a spinner or any loading indicator here */}
     </div>
   );
 }

@@ -1,8 +1,10 @@
-/* NavBar.css */
 .navbar {
   width: 100%;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
 }
 
 .container-fluid {
@@ -46,7 +48,7 @@
 }
 
 .account-icon-container .account-icon:hover {
-  color: #0056b3;
+  color: rgb(41, 151, 171);
 }
 
 .dropdown-menu a, .dropdown-menu button {
@@ -64,28 +66,53 @@
   display: block;
   padding: 10px;
   background-color: white;
-  border: none;
+  border: none !important;
   color: #333;
   cursor: pointer;
   text-align: left;
 }
+.search-form {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 5px 10px;
+  background-color: #fff;
+  margin: 0 20px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  padding: 5px;
+  font-size: 16px;
+  flex-grow: 1;
+}
+
+.search-input::placeholder {
+  font-style: italic;
+  color: #999;
+}
 
 .account-icon-container .dropdown-menu button:hover {
-  color: #0056b3;
+  color: rgb(37, 150, 165);
 }
 
 .navbar-brand {
-  font-size: 1.25rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.8rem;
   font-weight: bold;
-  color: #495057;
+  color: rgb(67, 157, 169) !important;
   text-decoration: none;
+  margin-right: 20px;
 }
 
 .user-avatar {
   width: 40px;
   height: 40px;
+  border: 2px solid rgb(127, 221, 226);
   border-radius: 50%;
-  background-color: #0056b3; /* Example blue background */
+  background-color: rgb(67, 157, 169); 
   color: white;
   display: flex;
   justify-content: center;
@@ -93,13 +120,14 @@
   font-size: 20px;
   font-weight: bold;
   text-transform: uppercase;
-  text-decoration: none; /* Ensure no underline */
+  text-decoration: none;
 }
 
 button .user-avatar, button .user-avatar:hover, button .user-avatar:focus {
-  text-decoration: none; /* Ensuring no underline on any button state */
+  text-decoration: none; 
 }
 
 .account-icon, .account-icon:hover, .account-icon:focus {
-  text-decoration: none; /* Applies to surrounding elements if necessary */
+  text-decoration: none; 
+  border: none !important;
 }

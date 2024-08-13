@@ -1,15 +1,15 @@
-/* EquipmentDetails.css */
-
 .equipment-details-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  max-width: 1200px;
+  height: auto;
+  margin: 90px auto 40px; 
+  background: linear-gradient(to left, rgb(199, 240, 245), #ffffff);
+  border: 2px solid rgb(111, 216, 221) !important;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
   }
   
   .equipment-details-container h2 {
@@ -52,7 +52,7 @@
   .equipment-title {
     font-size: 22px;
     font-weight: bold;
-    color: #3366cc;
+    color: rgb(25, 126, 139);
   }
   
   .equipment-description,
@@ -112,7 +112,7 @@
   
   .calendar-icon {
     color: #6c757d;
-    background-color: white;
+    background-color: transparent !important;
     cursor: pointer;
     padding: 8px;
     display: flex;
@@ -122,11 +122,12 @@
   }
   
   .rental-form .btn {
-    background-color: #007bff;
+    background-color: rgb(81, 185, 199);;
     border: none;
+    width: 236px;
   }
   
   .rental-form .btn:hover {
-    background-color: #0056b3;
+    background-color: rgb(55, 149, 161);;
   }
   
